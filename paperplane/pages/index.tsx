@@ -1,11 +1,25 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import { useState } from "react"
 
 export default function Home() {
+  const [isLogin, setIsLogin] = useState(false);
+
   return (
-    <div className={styles.container}>
-     
-    </div>
+    <>
+      <div className="container">
+        <div>
+          홈 페이지
+        </div>
+      </div>
+      <style jsx>{`
+        .container {
+          display: flex;
+          justify-content: center;
+          width:100%;
+          height:100vh;
+          background:linear-gradient(white, #EEE3D9);
+        }
+        
+        `}</style>
+    </>
   )
 }
