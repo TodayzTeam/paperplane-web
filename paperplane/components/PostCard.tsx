@@ -5,6 +5,7 @@ const style = css`
   .container {
     display: flex;
     padding: 35px 22px;
+    margin: 20px;
     background-color: #fffdf9;
     box-shadow: 1px 3px 3px 1px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
