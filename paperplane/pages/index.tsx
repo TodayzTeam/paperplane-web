@@ -1,4 +1,7 @@
 import { useState } from "react";
+
+import PostCard from "../components/PostCard";
+import Carousel from "../components/Carousel";
 import AfterLogin from "../components/home/AfterLogin";
 import BeforeLogin from "../components/home/BeforeLogin";
 
@@ -8,6 +11,7 @@ export default function Home() {
   return (
     <>
       <div className="home-container">
+        <Carousel />
         <div
           style={{ textAlign: "center", cursor: "pointer", paddingTop: 100 }}
           onClick={() => {
