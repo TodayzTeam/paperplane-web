@@ -11,6 +11,7 @@ const style = css`
     border-radius: 5px;
     width: 300px;
     height: 200px;
+    margin: 100px;
   }
   .left-box {
     width: 50%;
