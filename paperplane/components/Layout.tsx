@@ -5,7 +5,7 @@ const Layout = (props: any) => {
   return (
     <>
       <div className="container">
-        <Header />        
+        <Header />
         <div className="content">{props.children}</div>
         <Footer />
       </div>
@@ -17,7 +17,8 @@ const Layout = (props: any) => {
         .content {
           flex: 1;
           width: 100%;
-          min-height: 100vh;
+          height: auto;
+          min-height: 100%;
         }
       `}</style>
     </>
