@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Carousel from "../Carousel";
 import Button from "./Button";
 const BeforeLogin = () => {
   return (
@@ -18,6 +19,7 @@ const BeforeLogin = () => {
             <br />이 달의 편지
           </div>
         </div>
+        <Carousel />
         <div className="link-box">
           <div className="msg1">
             종이비행기를 통해

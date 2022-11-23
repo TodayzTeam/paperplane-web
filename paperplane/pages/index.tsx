@@ -11,7 +11,6 @@ export default function Home() {
   return (
     <>
       <div className="home-container">
-        <Carousel />
         <div
           style={{ textAlign: "center", cursor: "pointer", paddingTop: 100 }}
           onClick={() => {
