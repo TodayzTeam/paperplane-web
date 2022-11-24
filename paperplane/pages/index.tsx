@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import PostCard from "../components/PostCard";
-import Carousel from "../components/Carousel";
+import Carousel from "../components/home/Carousel";
 import AfterLogin from "../components/home/AfterLogin";
 import BeforeLogin from "../components/home/BeforeLogin";
 
