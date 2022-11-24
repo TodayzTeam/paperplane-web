@@ -7,35 +7,15 @@ export default function group() {
     <>
       <div className="group-container">
         <aside className="group-list">
-          <nav className="list-title-box">
-            <h2 style={{ margin: 0 }}>그룹 목록</h2>
-            <div className="image-box">
-              <button>
-                <Image
-                  style={{ marginRight: "5px" }}
-                  src="/image/search.svg"
-                  alt={"그룹 검색"}
-                  width={32}
-                  height={32}
-                />
-              </button>
-              <button>
-                <Image
-                  src="/image/add.svg"
-                  alt={"그룹 추가"}
-                  width={40}
-                  height={40}
-                />
-              </button>
-            </div>
-          </nav>
-          {/* 그룹 컴포넌트 */}
-          <GroupCard />
-        </aside>
-        <main className="letter-list">
-          <div className="selected-title-box">
-            <h1 style={{ color: "#E890A5", margin: 0 }}>오늘의팀</h1>
-            <div className="image-box">
+          <div className="list-title-box">
+            <h1 style={{ color: "#E890A5", margin: 0, fontSize: "40px" }}>
+              오늘의팀
+            </h1>
+          </div>
+          <div className="member-title">
+            <span style={{ fontSize: "18px", color: "#585858" }}>구성원</span>
+            <div className="mix-button">
+              <div style={{ color: "#787878" }}>초대 코드 복사</div>
               <button>
                 <Image
                   src="/image/link.svg"
@@ -44,38 +24,61 @@ export default function group() {
                   height={35}
                 />
               </button>
-              <div style={{ color: "#787878" }}>초대 코드 복사</div>
-              <button>
-                <Image
-                  style={{ marginLeft: "13px" }}
-                  src="/image/sign-out.svg"
-                  alt={"그룹 나가기"}
-                  width={35}
-                  height={35}
-                />
-              </button>
             </div>
           </div>
+          {/* 구성원 컴포넌트 */}
+          <ul className="member-list">
+            <li>
+              <Image src="/image/profile.svg" alt="" width={100} height={100} />
+            </li>
+            <li>
+              <Image src="/image/profile.svg" alt="" width={100} height={100} />
+            </li>
+            <li>
+              <Image src="/image/profile.svg" alt="" width={100} height={100} />
+            </li>
+            <li>
+              <Image src="/image/profile.svg" alt="" width={100} height={100} />
+            </li>
+            <li>
+              <Image src="/image/profile.svg" alt="" width={100} height={100} />
+            </li>
+            <li>
+              <Image src="/image/profile.svg" alt="" width={100} height={100} />
+            </li>
+          </ul>
+          <button>
+            <div className="mix-button">
+              <Image
+                style={{ marginLeft: "13px" }}
+                src="/image/sign-out.svg"
+                alt={"그룹 나가기"}
+                width={35}
+                height={35}
+              />
+              <div style={{ marginLeft: "5px", color: "#FD9D74" }}>
+                그룹에서 나가기
+              </div>
+            </div>
+          </button>
+        </aside>
+        <main className="letter-list">
           <div
             style={{
               display: "flex",
-              alignItems: "center",
+              alignItems: "flex-end",
               flexDirection: "column",
+              justifyContent: "flex-end",
             }}
           >
+            <div className="search-bar">
+              <Image src="/image/search.svg" alt="" width={24} height={24} />
+            </div>
             <PostCard data={[]} size={"BIG"} />
             <PostCard data={[]} size={"BIG"} />
             <PostCard data={[]} size={"BIG"} />
           </div>
         </main>
-        <div className="member-list">
-          <Image src="/image/stranger.svg" alt={""} width={40} height={40} />
-          <Image src="/image/stranger.svg" alt={""} width={40} height={40} />
-          <Image src="/image/stranger.svg" alt={""} width={40} height={40} />
-          <Image src="/image/stranger.svg" alt={""} width={40} height={40} />
-          <Image src="/image/stranger.svg" alt={""} width={40} height={40} />
-          <Image src="/image/stranger.svg" alt={""} width={40} height={40} />
-        </div>
       </div>
       <style jsx>{`
         .group-container {
@@ -83,6 +86,7 @@ export default function group() {
           margin: 72px auto 30px;
           justify-content: center;
           background-image: url("/image/background-group.png");
+          color: black;
         }
         .group-list {
           flex-basis: 390px;
@@ -93,29 +97,10 @@ export default function group() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 60px 40px 28px 60px;
-        }
-        .image-box {
-          display: flex;
-          align-items: center;
+          margin-bottom: 80px;
         }
         .letter-list {
           flex-basis: 480px;
-        }
-        .selected-title-box {
-          flex: 1 1 0%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 60px 40px 10px 60px;
-        }
-        .member-list {
-          display: flex;
-          flex-direction: column;
-          margin-top: 128px;
-        }
-        .member-list > img {
-          margin-bottom: 5px;
         }
         button {
           -webkit-appearance: none;
@@ -125,6 +110,46 @@ export default function group() {
           border: none;
           background-color: rgba(0, 0, 0, 0);
           padding: 0;
+        }
+        .member-title {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 23px;
+        }
+        .mix-button {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+        }
+        .member-list {
+          display: flex;
+          flex-wrap: wrap;
+          width: 360px;
+          height: 240px;
+          list-style: none;
+          padding: 0;
+          margin: 0 auto 50px;
+        }
+        .member-list > li {
+          margin-right: 30px;
+          margin-bottom: 40px;
+        }
+        .member-list > li:nth-child(3n) {
+          margin-right: 0;
+        }
+        .search-bar {
+          width: 250px;
+          height: 36px;
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          border: 1px solid #bababa;
+          border-radius: 18px;
+          padding: 6px 14px;
+          margin-right: 20px;
+          margin-bottom: 50px;
         }
       `}</style>
     </>
