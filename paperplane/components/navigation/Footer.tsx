@@ -1,17 +1,14 @@
 const Footer = () => {
   return (
     <>
-      <footer>
-        푸터
-      </footer>
+      <footer>푸터</footer>
       <style jsx>{`
         footer {
           height: 200px;
-          background-color: #E5EFFA;
+          background-color: #e5effa;
           padding: 20px;
-          color: #BABABA;
+          color: #bababa;
         }
-        
       `}</style>
     </>
   );
