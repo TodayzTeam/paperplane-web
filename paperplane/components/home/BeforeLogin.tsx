@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Carousel from "../Carousel";
 import Button from "./Button";
 const BeforeLogin = () => {
   return (
@@ -18,6 +19,9 @@ const BeforeLogin = () => {
             <br />이 달의 편지
           </div>
         </div>
+        <div className="carousel">
+          <Carousel />
+        </div>
         <div className="link-box">
           <div className="msg1">
             종이비행기를 통해
@@ -36,7 +40,7 @@ const BeforeLogin = () => {
           flex-direction: column;
           box-sizing: border-box;
           width: 100%;
-          padding: 10%;
+          padding: 7%;
           gap: 300px;
         }
         .title {
@@ -63,11 +67,12 @@ const BeforeLogin = () => {
           gap: 20px;
         }
         .list {
+          margin-left: 20px;
         }
         .list-title {
           color: white;
           font-size: 40px;
-          font-weight: 700;
+          font-weight: 400;
         }
         .link-box {
           text-align: center;
@@ -86,6 +91,8 @@ const BeforeLogin = () => {
           display: flex;
           justify-content: center;
           gap: 20px;
+        }
+        .carousel {
         }
       `}</style>
     </>

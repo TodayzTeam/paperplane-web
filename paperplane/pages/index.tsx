@@ -11,7 +11,6 @@ export default function Home() {
   return (
     <>
       <div className="home-container">
-        <Carousel />
         <div
           style={{ textAlign: "center", cursor: "pointer", paddingTop: 100 }}
           onClick={() => {
@@ -27,7 +26,8 @@ export default function Home() {
           position: relative;
           top: -60px;
           width: 100%;
-          background: linear-gradient(#a5bed8, #fff);
+          background: url("/image/home_background.png") no-repeat;
+          background-size: 100% 120%;
         }
       `}</style>
     </>

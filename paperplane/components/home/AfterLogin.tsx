@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Carousel from "../Carousel";
 import Button from "./Button";
 const AfterLogin = () => {
   return (
@@ -28,6 +29,7 @@ const AfterLogin = () => {
             <br />이 달의 편지
           </div>
         </div>
+        <Carousel />
       </div>
       <style jsx>{`
         .container {
