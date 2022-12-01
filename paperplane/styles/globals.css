@@ -63,6 +63,25 @@ a {
   transition: all 200ms linear;
   transform: scale(0.9);
 }
-/* .container {
-  background-color: rgba(0, 100, 0, 1);
-} */
+
+:root {
+  --color-primary-light: #e5effa;
+  --color-primary-default: #b1cdeb;
+  --color-primary-dark: #6b85a4;
+  --color-primary-deep: #3d5470;
+
+  --color-secondary-light: #fbebf3;
+  --color-secondary-default: #fbd5e7;
+  --color-secondary-dark: #e890a5;
+  --color-secondary-deep: #d26c84;
+
+  --color-emphasize-light: #ffe9e0;
+  --color-emphasize-default: #fdbda2;
+  --color-emphasize-dark: #fd9d74;
+  --color-emphasize-deep: #ef591a;
+
+  --color-gray-01: #eaeaea;
+  --color-gray-02: #bababa;
+  --color-gray-03: #787878;
+  --color-gray-04: #585858;
+}
