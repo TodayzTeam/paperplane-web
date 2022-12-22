@@ -74,7 +74,7 @@ const Header = () => {
         .logo {
           font-size: 28px;
           font-weight: 700;
-          color: #6b85a4;
+          color: var(--color-primary-dark);
         }
         .account-box {
           display: flex;
