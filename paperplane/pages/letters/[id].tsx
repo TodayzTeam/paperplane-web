@@ -10,12 +10,14 @@ export default function LetterDetailPage(props: propsType) {
         <main className="content-box">
           <div className="head-box">
             <span className="title">종이비행기</span>
-            <Image
-              src={"/image/stamp.png"}
-              alt={"우표"}
-              width={100}
-              height={80}
-            />
+            <div className="stamp">
+              <Image
+                src={"/image/stamp.png"}
+                alt={"우표"}
+                width={100}
+                height={80}
+              />
+            </div>
           </div>
           <p className="content">
             오늘의팀이 바라본 현대 사회의 모습은 모든 게 빠르게 흘러가고 세상에
@@ -59,20 +61,25 @@ export default function LetterDetailPage(props: propsType) {
               />
             </div>
           </div>
-          <Image
-            src="/image/letter.png"
-            alt="답장 온 편지"
-            width={300}
-            height={200}
-            style={{ marginLeft: "45px" }}
-          />
-          <Image
-            src="/image/letter.png"
-            alt="답장 온 편지"
-            width={300}
-            height={200}
-            style={{ marginLeft: "50px" }}
-          />
+          <div className="reply">
+            <Image
+              src="/image/letter.png"
+              alt="답장 온 편지"
+              width={300}
+              height={200}
+              style={{ marginLeft: "45px" }}
+            />
+          </div>
+          <div className="reply">
+            <Image
+              className="reply"
+              src="/image/letter.png"
+              alt="답장 온 편지"
+              width={300}
+              height={200}
+              style={{ marginLeft: "50px" }}
+            />
+          </div>
         </div>
         <div
           style={{
@@ -119,6 +126,9 @@ export default function LetterDetailPage(props: propsType) {
           font-weight: 700;
           font-size: 40px;
         }
+        .stamp:hover {
+          transform: scale(1.1);
+        }
         .content {
           font-size: 20px;
           line-height: 250%;
@@ -129,9 +139,13 @@ export default function LetterDetailPage(props: propsType) {
           text-align: right;
           color: var(--color-gray-04);
           margin: 0;
+          font-size: 18px;
         }
         .reply-wrapper {
           display: flex;
+        }
+        .reply:hover {
+          transform: translate(0, -10px);
         }
         .text-box {
           display: flex;
@@ -160,6 +174,7 @@ export default function LetterDetailPage(props: propsType) {
           background: var(--color-primary-deep);
           border-radius: 35px;
           padding: 25px 40px;
+          font-weight: 700;
           width: 143px;
           height: 69px;
           outline: 0;
@@ -168,11 +183,6 @@ export default function LetterDetailPage(props: propsType) {
         .btn-back:hover {
           background: white;
           color: var(--color-primary-deep);
-          border-radius: 35px;
-          padding: 25px 40px;
-          width: 143px;
-          height: 69px;
-          outline: 0;
           border: 1px solid var(--color-primary-deep);
         }
       `}</style>
