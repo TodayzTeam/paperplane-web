@@ -5,11 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as loginActions from '../store/modules/login';
 import LoginButton from '../components/login/LoginButton';
 
-const URL = 'https://f818-222-120-89-55.jp.ngrok.io';
+const URL = 'http://43.200.226.22:8080/';
 
 export default function login() {
   const dispatch = useDispatch();
   const value = useSelector(({ login }) => login.value);
+  const router = useRouter();
 
   const login = useCallback(() => {
     dispatch(loginActions.login());
@@ -31,7 +32,10 @@ export default function login() {
               text="네이버로 시작하기"
               backgroundColor="#06C93A"
               textColor="#fff"
-              onClick={() => {}}
+              onClick={() => {
+                login();
+                router.push('/');
+              }}
             />
             <LoginButton
               url="/image/kakao.jpg"
