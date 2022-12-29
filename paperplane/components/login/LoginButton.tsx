@@ -35,7 +35,7 @@ const LoginButton = (props: buttonProps) => {
           justify-content: center;
           position: relative;
           margin-bottom: 20px;
-
+          cursor: pointer;
           .logo {
             position: absolute;
             top: 0;
