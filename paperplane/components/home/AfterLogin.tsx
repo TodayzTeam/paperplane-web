@@ -1,14 +1,14 @@
-import Image from "next/image";
-import Carousel from "../home/Carousel";
-import Button from "./Button";
+import Image from 'next/image';
+import Carousel from '../home/Carousel';
+import Button from './Button';
 const AfterLogin = () => {
   return (
     <>
       <div className="container">
         <div className="title">
           <Image
-            src={"/image/letterbox.png"}
-            alt={"우편함"}
+            src={'/image/letterbox.png'}
+            alt={'우편함'}
             width={350}
             height={350}
             style={{ opacity: 0.7 }}
@@ -21,7 +21,7 @@ const AfterLogin = () => {
         </div>
         <div className="sub">
           편지로 마음을 전해보세요
-          <Image src="/image/arrow.svg" alt={""} width={50} height={50} />
+          <Image src="/image/arrow.svg" alt={''} width={50} height={50} />
         </div>
         <div className="list">
           <div className="list-title">
@@ -45,7 +45,7 @@ const AfterLogin = () => {
           justify-content: center;
           align-items: center;
           font-weight: 700;
-          gap: 150px;
+          gap: 100px;
         }
         .title-text {
           color: white;

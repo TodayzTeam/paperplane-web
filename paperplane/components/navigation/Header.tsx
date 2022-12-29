@@ -1,16 +1,22 @@
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import icon from "./icon.png";
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { useState, useCallback } from 'react';
+import icon from './icon.png';
+import { useDispatch, useSelector } from 'react-redux';
+import * as loginActions from '../../store/modules/login';
 
 const Header = () => {
-  const [isLogin, setIsLogin] = useState(false);
+  const dispatch = useDispatch();
+  const isLogin = useSelector(({ login }) => login.value);
+  const logout = useCallback(() => {
+    dispatch(loginActions.logout());
+  }, [dispatch]);
 
   const router = useRouter();
   const path = router.pathname;
   const className = (link: string) => {
-    return path == link && "active";
+    return path == link && 'active';
   };
 
   return (
@@ -20,7 +26,7 @@ const Header = () => {
           <Link href="/">
             <div className="logo">종이비행기</div>
           </Link>
-          {isLogin ? <div></div> : ""}
+          {isLogin ? <div></div> : ''}
         </div>
         <div>
           {isLogin ? (
@@ -30,7 +36,7 @@ const Header = () => {
                 <div
                   className="logout"
                   onClick={() => {
-                    setIsLogin(false);
+                    logout();
                   }}
                 >
                   로그아웃
@@ -43,14 +49,7 @@ const Header = () => {
           ) : (
             <div className="account-box">
               <Link href="/login">
-                <div
-                  className="login"
-                  onClick={() => {
-                    setIsLogin(true);
-                  }}
-                >
-                  로그인
-                </div>
+                <div className="login">로그인</div>
               </Link>
               <Link href="/signup">
                 <div className="signup">회원가입</div>
