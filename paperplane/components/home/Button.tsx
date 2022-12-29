@@ -16,7 +16,7 @@ const Button = (props: buttonImpl) => {
           background-color: ${color};
           color: ${color === "white" ? "#6B85A4" : "white"};
           border-radius: 24px;
-          border: 1px solid #6b85a4;
+          border: 1px solid var(--color-primary-dark);
           font-size: 15px;
           font-weight: 700;
           padding: 15px 30px;
