@@ -33,7 +33,9 @@ export default function LetterDetailPage(props: propsType) {
             합니다.
           </p>
           <div className="from-box">
-            <p>2022년 11월 26일</p>
+            <p style={{ marginTop: "50px", marginBottom: "20px" }}>
+              2022년 11월 26일
+            </p>
             <p>익명의 비행사</p>
           </div>
         </main>
@@ -121,10 +123,12 @@ export default function LetterDetailPage(props: propsType) {
           font-size: 20px;
           line-height: 250%;
           letter-spacing: 0.05rem;
+          margin: 0;
         }
         .from-box > p {
           text-align: right;
           color: var(--color-gray-04);
+          margin: 0;
         }
         .reply-wrapper {
           display: flex;
