@@ -11,7 +11,7 @@ const Layout = (props: any) => {
     if (router.pathname === '/login' || router.pathname === '/signup') {
       setShowFooter(false);
     }
-  }, [showFooter]);
+  }, [router]);
 
   return (
     <>
