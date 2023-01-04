@@ -1,7 +1,59 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
-export default function newletter() {
+export default function Newletter() {
+  // useRef
+  type InputType = {
+    title: string;
+    content: string;
+    recipient: string;
+    hashtag: Array<string>;
+  };
+  /* 화살표 함수 */
+
+  const [inputs, setInputs] = useState<InputType | null>({
+    title: "",
+    content: "",
+    recipient: "",
+    hashtag: [],
+  });
+
+  const titleInput = useRef<undefined>(null);
+
+  const { title, content, recipient, hashtag } = inputs;
+
+  const onChange = (e: any) => {
+    const { value, name } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    console.log(inputs);
+  }, [inputs]);
+
+  const recipientHandler = (e: any) => {
+    // console.log(e.target.parentElement.classList);
+    if (e.target.parentElement.classList.contains("active")) {
+      e.target.parentElement.classList.remove("active");
+    } else {
+      e.target.parentElement.classList.add("active");
+    }
+  };
+
+  const onClick = (e: any) => {
+    const btn = e.target.parentElement.parentElement.children[0];
+    // inputs?.recipient = e.target.innerText;
+    btn.innerText = e.target.innerText;
+    btn.parentElement.classList.remove("active");
+    setInputs({
+      ...inputs,
+      ["recipient"]: e.target.innerText,
+    });
+  };
+
   return (
     <div className="container">
       <form>
@@ -14,10 +66,12 @@ export default function newletter() {
             {/* 편지 쓰는 컴포넌트 */}
             <div className="write-title-box">
               <input
+                name={"title"}
                 type={"text"}
                 className={"input-title"}
-                onChange={() => {}}
+                onChange={onChange}
                 placeholder={"제목 입력하기"}
+                ref={titleInput}
               />
               <label className="title-description">제목을 입력하세요.</label>
             </div>
@@ -30,8 +84,8 @@ export default function newletter() {
                   height={104}
                 />
               </span>
-
               <textarea
+                name={"content"}
                 className="write-box"
                 placeholder="당신의 이야기를 들려주세요"
               />
@@ -49,13 +103,32 @@ export default function newletter() {
           <section className="recipient-wrapper">
             <span className="send-title">받는 사람</span>
             <div className="recipient-content">
-              {/* 받는 사람 선택하기 */}
-              <select className="recipient-dropdown">
-                <option value="whole">전체</option>
-                <option value="whole">전체</option>
-                <option value="whole">전체</option>
-                <option value="whole">전체</option>
-              </select>
+              <div className="dropdown">
+                <button
+                  className="recipient-label"
+                  type="button"
+                  onClick={recipientHandler}
+                >
+                  전체
+                </button>
+                <ul className="recipient-options">
+                  <li className="option" onClick={onClick}>
+                    전체
+                  </li>
+                  <li className="option" onClick={onClick}>
+                    오늘의팀
+                  </li>
+                  <li className="option" onClick={onClick}>
+                    잇타
+                  </li>
+                  <li className="option" onClick={onClick}>
+                    가족
+                  </li>
+                  <li className="option" onClick={onClick}>
+                    종이비행기
+                  </li>
+                </ul>
+              </div>
               <div style={{ display: "flex", flexFlow: "column" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <p style={{ margin: "0 36px 0 0", width: "65px" }}>
@@ -222,7 +295,11 @@ export default function newletter() {
           flex-flow: row;
           margin-bottom: 136px;
         }
-        .recipient-dropdown {
+        .dropdown {
+          display: flex;
+          flex-flow: column;
+        }
+        .recipient-label {
           -moz-appearance: none;
           -webkit-appearance: none;
           appearance: none;
@@ -232,13 +309,40 @@ export default function newletter() {
           padding: 11px 22px;
           width: 270px;
           height: 40px;
-          background: #fff url("image/arrow-down.svg") no-repeat 93% 50%/20px
+          background: #fff url("/image/arrow-down.svg") no-repeat 93% 50%/20px
             10px;
           color: var(--color-gray-04);
           border: none;
           border-radius: 5px;
           box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
           margin-right: 150px;
+          text-align: left;
+        }
+        .dropdown .recipient-options {
+          top: 28px;
+          left: 0;
+          width: 270px;
+          background: white;
+          color: var(--color-gray-04);
+          list-style-type: none;
+          padding: 0;
+          border-radius: 5px;
+          overflow: hidden;
+          max-height: 0;
+          transition: 0.3s ease-in;
+          box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.15);
+        }
+        .dropdown.active .recipient-options {
+          max-height: 500px;
+        }
+        .dropdown .option {
+          padding: 11px 0px 11px 22px;
+          transition: 0.1s;
+        }
+        .dropdown .option:hover {
+          background: var(--color-gray-01);
+          border: 1px solid var(--color-gray-03);
+          border-radius: 5px;
         }
         .search-box {
           width: 270px;
@@ -250,6 +354,8 @@ export default function newletter() {
           justify-content: center;
           margin-left: 100px;
           margin-top: 21px;
+          background: #fff url("/image/btn-search.svg") no-repeat 93% 50%/20px
+            26px;
         }
         .hash-tag {
           background: transparent;
