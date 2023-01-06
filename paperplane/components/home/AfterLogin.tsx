@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Carousel from '../home/Carousel';
 import Button from './Button';
+
 const AfterLogin = () => {
   return (
     <>
