@@ -5,11 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as loginActions from '../store/modules/login';
 import LoginButton from '../components/login/LoginButton';
 
-const URL = 'http://43.200.226.22:8080/';
-
 export default function login() {
   const dispatch = useDispatch();
-  const value = useSelector(({ login }) => login.value);
   const router = useRouter();
 
   const login = useCallback(() => {
@@ -46,11 +43,11 @@ export default function login() {
             />
           </div>
         </div>
-        {/* <button onClick={() => login()}>로그인</button>
+        <button onClick={() => login()}>로그인</button>
         <button onClick={() => logout()}>로그아웃</button>
         <div>
-          <KaKao href={`${URL}/oauth2/authorization/kakao`} />
-        </div> */}
+          <KaKao />
+        </div>
       </div>
       <style jsx>{`
         .login__container {
