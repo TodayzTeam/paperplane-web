@@ -1,16 +1,15 @@
 import Image from 'next/image';
 interface buttonProps {
-  onClick: () => void;
   text: string;
   url: string;
   backgroundColor: string;
   textColor: string;
 }
 const LoginButton = (props: buttonProps) => {
-  const { onClick, text, url, backgroundColor, textColor } = props;
+  const { text, url, backgroundColor, textColor } = props;
   return (
     <>
-      <div className="button" onClick={() => onClick()}>
+      <div className="button">
         <Image
           className="logo"
           src={url}

@@ -1,7 +1,4 @@
 import { useSelector } from 'react-redux';
-
-import PostCard from '../components/PostCard';
-import Carousel from '../components/home/Carousel';
 import AfterLogin from '../components/home/AfterLogin';
 import BeforeLogin from '../components/home/BeforeLogin';
 
