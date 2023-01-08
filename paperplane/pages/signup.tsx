@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import Button from '../components/home/Button';
 import Tag from '../components/signup/Tag';
 
@@ -21,6 +22,8 @@ const DUMMY = [
 ];
 
 export default function signup() {
+  const router = useRouter();
+
   const temp_tag = DUMMY.map((ele) => {
     return {
       isSelected: true,

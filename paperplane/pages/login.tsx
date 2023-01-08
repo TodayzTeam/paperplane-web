@@ -1,24 +1,30 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import KaKao from '../components/login/KaKao';
-import { useDispatch, useSelector } from 'react-redux';
-import * as loginActions from '../store/modules/login';
+import { useDispatch } from 'react-redux';
 import LoginButton from '../components/login/LoginButton';
-
-const URL = 'http://43.200.226.22:8080/';
+import Link from 'next/link';
+import * as loginActions from '../store/modules/login';
 
 export default function login() {
-  const dispatch = useDispatch();
-  const value = useSelector(({ login }) => login.value);
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const login = useCallback(() => {
+  const getAccessToken = () => {
+    const accessToken = router.query.token;
+    if (accessToken) {
+      localStorage.setItem('token', accessToken);
+      Login();
+      router.push('/');
+    }
+  };
+
+  const Login = useCallback(() => {
     dispatch(loginActions.login());
   }, [dispatch]);
 
-  const logout = useCallback(() => {
-    dispatch(loginActions.logout());
-  }, [dispatch]);
+  useEffect(() => {
+    getAccessToken();
+  }, [router.query]);
 
   return (
     <>
@@ -32,25 +38,17 @@ export default function login() {
               text="네이버로 시작하기"
               backgroundColor="#06C93A"
               textColor="#fff"
-              onClick={() => {
-                login();
-                router.push('/');
-              }}
             />
-            <LoginButton
-              url="/image/kakao.jpg"
-              text="카카오로 시작하기"
-              backgroundColor="#FAE100"
-              textColor="#3D5470"
-              onClick={() => {}}
-            />
+            <Link href="http://43.200.226.22:8080/oauth2/authorization/kakao">
+              <LoginButton
+                url="/image/kakao.jpg"
+                text="카카오로 시작하기"
+                backgroundColor="#FAE100"
+                textColor="#3D5470"
+              />
+            </Link>
           </div>
         </div>
-        {/* <button onClick={() => login()}>로그인</button>
-        <button onClick={() => logout()}>로그아웃</button>
-        <div>
-          <KaKao href={`${URL}/oauth2/authorization/kakao`} />
-        </div> */}
       </div>
       <style jsx>{`
         .login__container {
