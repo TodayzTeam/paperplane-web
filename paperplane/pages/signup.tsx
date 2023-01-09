@@ -1,35 +1,83 @@
+import axios from 'axios';
 import { useRouter } from 'next/router';
+import { useCallback, useEffect, useState } from 'react';
 import Button from '../components/home/Button';
 import Tag from '../components/signup/Tag';
 
-const DUMMY = [
-  {
-    id: 1,
-    keyword: '고양이',
-  },
-  {
-    id: 2,
-    keyword: '고양이',
-  },
-  {
-    id: 3,
-    keyword: '고양이',
-  },
-  {
-    id: 4,
-    keyword: '고양이',
-  },
-];
-
 export default function signup() {
   const router = useRouter();
+  const [recommendInterest, setRecommendInterest] = useState([
+    { id: 1, keyword: '고양이' },
+    { id: 2, keyword: '고양이2' },
+    { id: 3, keyword: '고양이3' },
+  ]);
+  const [searchedInterest, setSearchedInterest] = useState([]);
+  const [selectedInterest, setSelectedInterest] = useState([]);
 
-  const temp_tag = DUMMY.map((ele) => {
-    return {
-      isSelected: true,
-      ...ele,
-    };
-  });
+  const onSubmitInterest = () => {
+    router.push('/');
+  };
+
+  const onAddSelectedTag = (tag) => {
+    let isExist = false;
+    selectedInterest.forEach(({ id }) => {
+      if (id === tag.id) isExist = true;
+    });
+
+    if (!isExist) {
+      const newSelectedInterest = [...selectedInterest, tag];
+      setSelectedInterest(newSelectedInterest);
+    }
+  };
+
+  const onRemoveSelectedTag = ({ id }) => {
+    const newSelectedInterest = selectedInterest.filter((tag) => tag.id !== id);
+    setSelectedInterest(newSelectedInterest);
+  };
+
+  let timer = null;
+  const onChangeHandler = (e) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      searchInterest(e.target.value);
+    }, 500);
+  };
+
+  const getRecommendInterest = async () => {
+    try {
+      const res = await axios.get('/interest/recommend', {
+        headers: {
+          'Content-type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+      if (res.status === 200) {
+        setRecommendInterest(res.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const searchInterest = async (keyword: string) => {
+    try {
+      const res = await axios.get(`/interest/search/${keyword}`, {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      });
+      if (res.status === 200) {
+        setSearchedInterest(res.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    //getRecommendInterest();
+  }, []);
+
   return (
     <>
       <div className="signup__container">
@@ -43,24 +91,41 @@ export default function signup() {
             선택해주세요
           </div>
           <div className="tags">
-            {temp_tag
-              .filter((ele) => ele.isSelected === true)
-              .map(({ id, keyword }) => (
-                <Tag key={id} keyword={keyword} onClick={() => {}} />
-              ))}
+            {selectedInterest.map(({ id, keyword }) => (
+              <Tag
+                key={id}
+                keyword={keyword}
+                onClick={() => {
+                  onRemoveSelectedTag({ id });
+                }}
+              />
+            ))}
           </div>
-          <Button color="#3D5470" text="완료" onClick={() => {}} />
+          <Button
+            color="#3D5470"
+            text="완료"
+            onClick={() => {
+              onSubmitInterest();
+            }}
+          />
         </div>
         <div className="right-box">
           <div className="right-box__search">
             <input
               className="right-box__input"
               type="text"
-              placeholder="주제를 입력해주세요"
+              placeholder="관심 있는 주제를 검색하세요"
+              onChange={onChangeHandler}
             />
             <div className="tags">
-              {DUMMY.map((tag) => (
-                <Tag key={tag.id} keyword={tag.keyword} onClick={() => {}} />
+              {searchedInterest.map((tag) => (
+                <Tag
+                  key={tag.id}
+                  keyword={tag.keyword}
+                  onClick={() => {
+                    onAddSelectedTag(tag);
+                  }}
+                />
               ))}
             </div>
           </div>
@@ -70,8 +135,14 @@ export default function signup() {
                 다른 사람들은 이런 단어를 선택했어요!
               </div>
               <div className="tags">
-                {DUMMY.map((tag) => (
-                  <Tag key={tag.id} keyword={tag.keyword} onClick={() => {}} />
+                {recommendInterest.map((tag) => (
+                  <Tag
+                    key={tag.id}
+                    keyword={tag.keyword}
+                    onClick={() => {
+                      onAddSelectedTag(tag);
+                    }}
+                  />
                 ))}
               </div>
             </div>
