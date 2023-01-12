@@ -19,6 +19,10 @@ const Header = () => {
     return path == link && 'active';
   };
 
+  console.log(path);
+
+  const text_color = path === '/letterbox' ? '#bababa' : '#fff';
+
   return (
     <header>
       <div className="container">
@@ -29,7 +33,7 @@ const Header = () => {
           {isLogin ? (
             <div className="link-box">
               <Link href="/letterbox">편지함</Link>
-              <Link href="/letterbox">그룹</Link>
+              <Link href="/group">그룹</Link>
             </div>
           ) : (
             ''
@@ -90,7 +94,7 @@ const Header = () => {
             margin-left: 40px;
             display: flex;
             gap: 20px;
-            color: #fff;
+            color: ${text_color};
             font-size: 15px;
           }
         }
