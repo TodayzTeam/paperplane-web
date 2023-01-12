@@ -8,8 +8,9 @@ interface tagProps {
 
 const Tag = (props: tagProps) => {
   const { color = '#E890A5', keyword, onClick } = props;
-  const textColor = color === '#fff' ? color : '#fff';
   const [isChecked, setIsChecked] = useState(false);
+  const backColor = isChecked ? '#E890A5' : '#fff';
+  const textColor = isChecked ? '#fff' : '#585858';
 
   return (
     <>
@@ -17,17 +18,19 @@ const Tag = (props: tagProps) => {
         className="tag__container"
         onClick={() => {
           onClick();
+          setIsChecked(!isChecked);
         }}
       >
         {keyword}
-        {isChecked ? '✅' : '+'}
+        {isChecked ? ' v' : ' +'}
       </div>
       <style jsx>{`
         .tag__container {
           display: flex;
           align-items: center;
           border-radius: 20px;
-          background-color: ${color};
+          border: 1px solid #e890a5;
+          background-color: ${backColor};
           color: ${textColor};
           font-size: 15px;
           padding: 10px 25px;

@@ -19,14 +19,25 @@ const Header = () => {
     return path == link && 'active';
   };
 
+  console.log(path);
+
+  const text_color = path === '/letterbox' ? '#bababa' : '#fff';
+
   return (
     <header>
       <div className="container">
-        <div>
+        <div className="logo-box">
           <Link href="/">
             <div className="logo">종이비행기</div>
           </Link>
-          {isLogin ? <div></div> : ''}
+          {isLogin ? (
+            <div className="link-box">
+              <Link href="/letterbox">편지함</Link>
+              <Link href="/group">그룹</Link>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
         <div>
           {isLogin ? (
@@ -74,6 +85,18 @@ const Header = () => {
           font-size: 28px;
           font-weight: 700;
           color: var(--color-primary-dark);
+        }
+        .logo-box {
+          display: flex;
+          align-items: center;
+
+          .link-box {
+            margin-left: 40px;
+            display: flex;
+            gap: 20px;
+            color: ${text_color};
+            font-size: 15px;
+          }
         }
         .account-box {
           display: flex;
