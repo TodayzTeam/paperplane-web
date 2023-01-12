@@ -108,7 +108,7 @@ export default function Newletter() {
     formdata.append("isReply", "false");
     formdata.append("keyword", JSON.stringify(hashtag));
 
-    Axios.post(`/post/create`, formdata, {
+    Axios.post(`/api/post/create`, formdata, {
       headers: {
         userId: 1,
       },

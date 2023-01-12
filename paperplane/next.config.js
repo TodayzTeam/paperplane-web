@@ -19,7 +19,7 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: "/:path*",
+        source: "/api/:path*",
         destination: "http://43.200.226.22:8080/:path*",
       },
     ];
