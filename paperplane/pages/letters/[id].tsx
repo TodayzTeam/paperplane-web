@@ -1,15 +1,59 @@
+import { useRouter } from "next/router";
+import Axios from "axios";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 type propsType = {
+  letter: letterType;
+};
+type letterType = {
   title: string;
   content: string;
+  date: Date;
+  reportCount: number;
+  likeCount: number;
+  group: string | null;
+  interest: Array<string>;
+  sender: sendType | null;
+  receivers: Array<string>;
 };
-export default function LetterDetailPage(props: propsType) {
+type sendType = {
+  name: string;
+  email: string;
+  profileImageUrl: string;
+};
+
+function LetterDetailPage(props: propsType) {
+  const router = useRouter();
+  const { id } = router.query;
+  const [letter, setLetter] = useState<letterType>({
+    title: "",
+    content: "",
+    date: new Date(),
+    reportCount: 0,
+    likeCount: 0,
+    group: null,
+    interest: [],
+    sender: null,
+    receivers: [],
+  });
+
+  // 받은 편지 / 보낸 편지 / 답장
+  // 받은 편지 : receivers에 본인 있음
+  // 보낸 편지 : sender가 본인
+  // 답장 : ?
+
+  useEffect(() => {
+    Axios.get("/api/post/info/1").then((res) => {
+      console.log(res.data);
+      setLetter(res.data);
+    });
+  }, []);
   return (
     <div className="container">
       <div className="content-wrapper">
         <main className="content-box">
           <div className="head-box">
-            <span className="title">종이비행기</span>
+            <span className="title">{letter.title}</span>
             <div className="stamp">
               <Image
                 src={"/image/stamp.png"}
@@ -19,24 +63,12 @@ export default function LetterDetailPage(props: propsType) {
               />
             </div>
           </div>
-          <p className="content">
-            오늘의팀이 바라본 현대 사회의 모습은 모든 게 빠르게 흘러가고 세상에
-            발맞추기 바쁜 시대이자, 그 어느 때보다 서로에 대한 이해가 필요해진
-            시점이지만 표현과 글이 어색한 시대로, 마음을 공유하는 일이 쉽지
-            않습니다. 저희는 ‘서로를 위로해주는 공간이 있다면?’ 이라는 질문에서
-            시작하여, 익명 아래 편하게 대화를 나눌 수 있고, 서로를 드러내지
-            않고도 전할 수 있는 이야기를 통해 위안을 얻을 수 있는 서비스를
-            만들어보고자 했습니다. 종이비행기는 익명의 편지를 불특정한 대상에게
-            랜덤으로 전달하는 서비스인데요, 내가 날린 편지가 어디로 도착할지
-            모른다는 종이비행기의 특징이 저희 서비스와 닮아 이름을 그대로
-            가져왔습니다. 오늘의 팀의 ‘종이비행기’는 모든 게 빠르게 흘러가는
-            시대, 위로가 부족한 시대에 하루 한 편지로 내 속도에 맞게 소통할 수
-            있는 곳, 익명 편지로 부담 없이 감정을 나눌 수 있는 곳이 되고자
-            합니다.
-          </p>
+          <p className="content">{letter.content}</p>
           <div className="from-box">
             <p style={{ marginTop: "50px", marginBottom: "20px" }}>
-              2022년 11월 26일
+              {new Date(letter.date).getFullYear()}년{" "}
+              {new Date(letter.date).getMonth() + 1}월{" "}
+              {new Date(letter.date).getDate()}일
             </p>
             <p>익명의 비행사</p>
           </div>
@@ -130,6 +162,7 @@ export default function LetterDetailPage(props: propsType) {
           transform: scale(1.1);
         }
         .content {
+          min-height: 200px;
           font-size: 20px;
           line-height: 250%;
           letter-spacing: 0.05rem;
@@ -189,3 +222,24 @@ export default function LetterDetailPage(props: propsType) {
     </div>
   );
 }
+
+// export async function getStaticPaths() {
+//   return {
+//     paths: [{ params: { id: "1" } }],
+//     fallback: false,
+//   };
+// }
+// export async function getStaticProps(context) {
+//   // const id = context.params.id;
+//   let letter = {};
+//   const res = await Axios.get(`/post/info/1`);
+
+//   return { letter: res };
+// }
+
+// export async function getServerSideProps() {
+//   const res = await Axios.get(`/post/info/1`);
+//   return { props: { res } };
+// }
+
+export default LetterDetailPage;

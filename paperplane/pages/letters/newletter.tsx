@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import Axios from "axios";
 
@@ -15,6 +16,8 @@ const GROUP_DUMMY = [
 const KEYWORD_DUMMY = ["해외여행", "여행", "책"];
 
 export default function Newletter() {
+  const router = useRouter();
+
   type InputType = {
     title: string;
     content: string;
@@ -96,24 +99,21 @@ export default function Newletter() {
 
   const submitHandler = () => {
     // 제출하고 페이지 이동(홈으로)
-    // console.log(inputs);
-    // receipient 뺴고 임시 작업
-    let body = {
-      title: title,
-      content: content,
-      keyword: hashtag,
-      color: "RED",
-      receiveGroup: "RAND",
-      isReply: "false",
-    };
-    Axios.post("/post/create", body, {
+    const formdata = new FormData();
+
+    formdata.append("title", title);
+    formdata.append("content", content);
+    formdata.append("receiveGroup", "RAND");
+    formdata.append("color", "RED");
+    formdata.append("isReply", "false");
+    formdata.append("keyword", JSON.stringify(hashtag));
+
+    Axios.post(`/api/post/create`, formdata, {
       headers: {
         userId: 1,
       },
     });
-    // Axios.get("/user/allid").then((response) => {
-    //   console.log(response);
-    // });
+    router.push("/");
   };
 
   return (
