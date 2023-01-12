@@ -22,11 +22,18 @@ const Header = () => {
   return (
     <header>
       <div className="container">
-        <div>
+        <div className="logo-box">
           <Link href="/">
             <div className="logo">종이비행기</div>
           </Link>
-          {isLogin ? <div></div> : ''}
+          {isLogin ? (
+            <div className="link-box">
+              <Link href="/letterbox">편지함</Link>
+              <Link href="/letterbox">그룹</Link>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
         <div>
           {isLogin ? (
@@ -74,6 +81,18 @@ const Header = () => {
           font-size: 28px;
           font-weight: 700;
           color: var(--color-primary-dark);
+        }
+        .logo-box {
+          display: flex;
+          align-items: center;
+
+          .link-box {
+            margin-left: 40px;
+            display: flex;
+            gap: 20px;
+            color: #fff;
+            font-size: 15px;
+          }
         }
         .account-box {
           display: flex;
