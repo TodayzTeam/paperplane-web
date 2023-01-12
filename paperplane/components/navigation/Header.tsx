@@ -19,9 +19,8 @@ const Header = () => {
     return path == link && 'active';
   };
 
-  console.log(path);
-
-  const text_color = path === '/letterbox' ? '#bababa' : '#fff';
+  const text_color =
+    path.substring(0, 10) === '/letterbox' ? '#bababa' : '#fff';
 
   return (
     <header>
@@ -32,7 +31,7 @@ const Header = () => {
           </Link>
           {isLogin ? (
             <div className="link-box">
-              <Link href="/letterbox">편지함</Link>
+              <Link href="/letterbox/received">편지함</Link>
               <Link href="/group">그룹</Link>
             </div>
           ) : (
