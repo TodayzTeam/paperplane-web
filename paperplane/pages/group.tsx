@@ -1,8 +1,38 @@
 import Image from "next/image";
 import GroupCard from "../components/group/GroupCard";
 import PostCard from "../components/PostCard";
+import Modal from "../components/group/Modal";
+import { useEffect, useState } from "react";
 
 export default function group() {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [modalVisible, setModalVisible] = useState<Array<boolean>>([
+    true,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ]);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    console.log(modalVisible);
+  }, [modalVisible]);
+
+  // modal click
+  const modalClickHandler = (modalNumber: number) => {
+    // modalVisible[modalNumber] => true 나머지 => false
+    console.log(modalVisible.map((modal, idx) => idx === modalNumber));
+    setModalVisible(modalVisible.map((modal, idx) => idx === modalNumber));
+  };
+  // modal close handler
+  const modalCloseHandler = () => {
+    setModalVisible(new Array(8).fill(false));
+  };
+
   return (
     <div className="container">
       <div className="title">그룹____</div>
@@ -138,6 +168,14 @@ export default function group() {
               <PostCard data={[]} size={"BIG"} />
             </div>
           </main>
+          <Modal
+            type={"SELECT"}
+            close={true}
+            askType={""}
+            visible={modalVisible}
+            closeHandler={modalCloseHandler}
+            clickHandler={modalClickHandler}
+          />
         </div>
       </div>
       <style jsx>{`
