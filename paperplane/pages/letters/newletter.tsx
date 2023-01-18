@@ -17,19 +17,23 @@ const KEYWORD_DUMMY = ["해외여행", "여행", "책"];
 
 export default function Newletter() {
   const router = useRouter();
+  const colorType = ["RED", "GREEN", "BLUE", "BLACK"];
+  const [groupList, setGroupList] = useState<Array<Object>>([]);
+  // const [accessToken, setAccessToken] = useState<string | null>("");
+  let accessToken: string | null;
 
   type InputType = {
     title: string;
     content: string;
-    recipient: number;
+    recipient: string;
     hashtag: Array<string>;
   };
 
-  const result = useState<Array<string>>(KEYWORD_DUMMY);
+  const [result, setResult] = useState<Array<string>>(KEYWORD_DUMMY);
   const [inputs, setInputs] = useState<InputType | null>({
     title: "",
     content: "",
-    recipient: -1,
+    recipient: "",
     hashtag: [],
   });
 
@@ -37,9 +41,27 @@ export default function Newletter() {
 
   const { title, content, recipient, hashtag } = inputs;
 
+  if (typeof window !== "undefined") {
+    // Perform localStorage action
+    accessToken = localStorage.getItem("token");
+  }
+
   useEffect(() => {
-    console.log(inputs);
-  }, [inputs]);
+    if (accessToken) {
+      Axios.get("/api/group/mygroup", {
+        headers: {
+          AccessToken: accessToken,
+        },
+      }).then((response) => {
+        // console.log(response.data);
+        setGroupList(response.data);
+      });
+      Axios.get("/api/interest/recommend").then((response) => {
+        // console.log(response.data.map((d) => d.keyword));
+        setResult(response.data.map((d) => d.keyword));
+      });
+    }
+  }, []);
 
   const inputHandler = (e: any) => {
     const { value, name } = e.target;
@@ -68,14 +90,14 @@ export default function Newletter() {
     }
   };
 
-  const onClick = (e: any, groupId: number, groupName: string) => {
+  const onClick = (e: any, groupCode: number, groupName: string) => {
     const btn = e.target.parentElement.parentElement.children[0];
     btn.innerText = groupName;
     btn.parentElement.classList.remove("active");
-    // groupId : 전체(-1), 나머지 고유 groupId 값
+    // groupCode : 전체(-1), 나머지 고유 groupId 값
     setInputs({
       ...inputs,
-      ["recipient"]: groupId,
+      ["recipient"]: groupCode,
     });
   };
 
@@ -98,19 +120,23 @@ export default function Newletter() {
   };
 
   const submitHandler = () => {
-    // 제출하고 페이지 이동(홈으로)
     const formdata = new FormData();
-
+    const color = colorType[Math.floor(Math.random() * 3)];
     formdata.append("title", title);
     formdata.append("content", content);
-    formdata.append("receiveGroup", "RAND");
-    formdata.append("color", "RED");
+    if (recipient !== "") {
+      formdata.append("receiveGroup", "GROUP");
+      formdata.append("groupCode", recipient);
+    } else {
+      formdata.append("receiveGroup", "RAND");
+    }
+    formdata.append("color", color);
     formdata.append("isReply", "false");
     formdata.append("keyword", JSON.stringify(hashtag));
 
     Axios.post(`/api/post/create`, formdata, {
       headers: {
-        userId: 1,
+        AccessToken: accessToken,
       },
     });
     router.push("/");
@@ -186,16 +212,16 @@ export default function Newletter() {
                     >
                       전체
                     </li>
-                    {GROUP_DUMMY.map((group, idx) => {
+                    {groupList.map((group, idx) => {
                       return (
                         <li
                           key={idx}
                           className="option"
                           onClick={(event) =>
-                            onClick(event, group.groupId, group.groupName)
+                            onClick(event, group.code, group.name)
                           }
                         >
-                          {group.groupName}
+                          {group.name}
                         </li>
                       );
                     })}
@@ -226,7 +252,7 @@ export default function Newletter() {
                     />
                   </div>
                   <div className="result-box">
-                    {result[0]
+                    {result
                       ?.filter((all) => !hashtag.includes(all))
                       .map((word, idx) => {
                         return (

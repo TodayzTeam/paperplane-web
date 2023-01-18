@@ -3,6 +3,7 @@ import GroupCard from "../components/group/GroupCard";
 import PostCard from "../components/PostCard";
 import Modal from "../components/group/Modal";
 import { useEffect, useState } from "react";
+import Axios from "axios";
 
 export default function group() {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -16,16 +17,36 @@ export default function group() {
     false,
     false,
   ]);
+  let accessToken: string | null;
+
+  if (typeof window !== "undefined") {
+    // Perform localStorage action
+    accessToken = localStorage.getItem("token");
+  }
+
+  // useEffect(() => {
+  //   console.log(modalVisible);
+  // }, [modalVisible]);
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    console.log(modalVisible);
-  }, [modalVisible]);
+    // 내가 속한 그룹
+    Axios.get("/api/group/mygroup", {
+      headers: {
+        AccessToken: accessToken,
+      },
+    })
+      .then((response) => {
+        // console.log(response.data);
+      })
+      .catch((error) => {
+        alert(error.response.data.message);
+      });
+  }, []);
 
   // modal click
   const modalClickHandler = (modalNumber: number) => {
     // modalVisible[modalNumber] => true 나머지 => false
-    console.log(modalVisible.map((modal, idx) => idx === modalNumber));
     setModalVisible(modalVisible.map((modal, idx) => idx === modalNumber));
   };
   // modal close handler
@@ -169,9 +190,8 @@ export default function group() {
             </div>
           </main>
           <Modal
-            type={"SELECT"}
-            close={true}
-            askType={""}
+            name="오늘의 팀"
+            code="45cca849-073e-4740-b228-72a9be8e350f"
             visible={modalVisible}
             closeHandler={modalCloseHandler}
             clickHandler={modalClickHandler}

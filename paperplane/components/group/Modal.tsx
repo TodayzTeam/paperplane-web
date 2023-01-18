@@ -2,21 +2,49 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import Axios from "axios";
 
-const Modal = ({ clickHandler, closeHandler, code = "", visible }) => {
+const Modal = ({
+  clickHandler,
+  closeHandler,
+  name = "",
+  code = "",
+  visible,
+}) => {
   const bgd = useRef<HTMLDivElement>(null);
+  let accessToken: string | null;
 
   const router = useRouter();
 
   const [groupName, setGroupName] = useState<string>("");
+  const [groupCode, setGroupCode] = useState<string>("");
+
+  if (typeof window !== "undefined") {
+    accessToken = localStorage.getItem("token");
+  }
 
   const inputHandler = (e: any, type: string) => {
     const content = e.target.parentElement.children[0].value;
-    console.log(content);
+    // console.log(content);
     if (type === "JOIN") {
       // 초대 코드에 해당하는 그룹 이름 확인하기
       // 틀리면 주황색 글씨로 틀렸다고 알림, 맞으면 groupName 설정
-      setGroupName("오늘의팀");
-      clickHandler(2); // 입장하겠냐는 컨펌 안내
+      Axios.get(
+        `/api/group/search/${content}`,
+        {},
+        {
+          headers: {
+            AccessToken: accessToken,
+          },
+        }
+      )
+        .then((response) => {
+          // console.log(response);
+          setGroupCode(response.data.code);
+          setGroupName(response.data.name);
+          clickHandler(2); // 입장하겠냐는 컨펌 안내
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+        });
     } else if (type === "CREATE") {
       setGroupName(content);
       clickHandler(4);
@@ -26,25 +54,61 @@ const Modal = ({ clickHandler, closeHandler, code = "", visible }) => {
   const confirmHandler = async (type: string) => {
     if (type === "JOIN") {
       // 그룹 조인 요청 url 수정 필요
-      // await Axios.post(`/api/group/join?code=`, {
-      //   headers: {
-      //     accessToken:
-      //       "",
-      //   },
-      // });
-      // router.reload();
+      Axios.post(
+        `/api/group/join?code=${groupCode}`,
+        {},
+        {
+          headers: {
+            AccessToken: accessToken,
+          },
+        }
+      )
+        .then((response) => {
+          alert(`그룹에 성공적으로 가입했습니다.`);
+          router.reload();
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+          router.reload();
+        });
     } else if (type === "CREATE") {
-      // await Axios.post(`/api/group/create?name=${groupName}`, {
-      //   headers: {
-      //     accessToken:
-      //       "",
-      //   },
-      // });
-      // router.reload();
+      if (accessToken) {
+        Axios.post(
+          `/api/group/create?name=${groupName}`,
+          {},
+          {
+            headers: {
+              AccessToken: accessToken,
+            },
+          }
+        )
+          .then((response) => {
+            alert("그룹이 성공적으로 만들어졌습니다.");
+            router.reload();
+          })
+          .catch((error) => {
+            alert(error.response.data.message);
+            router.reload();
+          });
+      }
     } else {
       // 그룹 나가기
-      console.log("그룹 나가기");
-      clickHandler(7);
+      Axios.post(
+        `/api/group/resign?code=${code}`,
+        {},
+        {
+          headers: {
+            AccessToken: accessToken,
+          },
+        }
+      )
+        .then((response) => {
+          clickHandler(7);
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+          router.reload();
+        });
     }
   };
   return (
@@ -279,9 +343,9 @@ const Modal = ({ clickHandler, closeHandler, code = "", visible }) => {
                 marginBottom: "11px",
               }}
             >
-              0n3uI_T3ann{code}
+              {code}
             </div>
-            <span style={{ marginBottom: "32px" }}>{groupName} 초대코드</span>
+            <span style={{ marginBottom: "32px" }}>{name} 초대코드</span>
             <div
               style={{
                 width: "100%",
@@ -295,7 +359,13 @@ const Modal = ({ clickHandler, closeHandler, code = "", visible }) => {
                 className="whole-btn"
                 type="button"
                 onClick={(event) => {
-                  // 코드 복사
+                  let t = document.createElement("textarea");
+                  document.body.appendChild(t);
+                  t.value = code;
+                  t.select();
+                  document.execCommand("copy");
+                  document.body.removeChild(t);
+                  alert("초대코드가 복사되었습니다");
                 }}
               >
                 초대코드 복사하기
@@ -322,7 +392,7 @@ const Modal = ({ clickHandler, closeHandler, code = "", visible }) => {
                 marginBottom: "11px",
               }}
             >
-              {groupName}에서 나가시겠습니까?
+              {name}에서 나가시겠습니까?
             </div>
             <span style={{ marginBottom: "32px" }}>
               그룹에서 나가면 주고 받은 편지가 사라져요.
@@ -369,7 +439,7 @@ const Modal = ({ clickHandler, closeHandler, code = "", visible }) => {
                 marginBottom: "45px",
               }}
             >
-              {groupName}에서 나갔습니다.
+              {name}에서 나갔습니다.
             </div>
             <div
               style={{
