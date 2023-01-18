@@ -15,7 +15,8 @@ export default function signup() {
   const [selectedInterest, setSelectedInterest] = useState([]);
 
   const onSubmitInterest = () => {
-    router.push('/');
+    setUserInterest();
+    //router.push('/');
   };
 
   const onAddSelectedTag = (tag) => {
@@ -43,9 +44,27 @@ export default function signup() {
     }, 500);
   };
 
+  const setUserInterest = async () => {
+    const keywordArr = selectedInterest.map(({ keyword }) => keyword);
+    const formData = new FormData();
+    formData.append('keyword', JSON.stringify(keywordArr));
+
+    try {
+      const res = await axios.post('/api/user/interest', formData, {
+        headers: {
+          accessToken: `${localStorage.getItem('token')}`,
+        },
+      });
+      if (res.status === 200) {
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getRecommendInterest = async () => {
     try {
-      const res = await axios.get('/interest/recommend', {
+      const res = await axios.get('/api/interest/recommend', {
         headers: {
           'Content-type': 'application/json',
           Accept: 'application/json',
@@ -75,7 +94,7 @@ export default function signup() {
   };
 
   useEffect(() => {
-    //getRecommendInterest();
+    getRecommendInterest();
   }, []);
 
   return (

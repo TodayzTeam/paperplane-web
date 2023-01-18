@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from "react";
-import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
-import LoginButton from "../components/login/LoginButton";
-import Link from "next/link";
-import * as loginActions from "../store/modules/login";
+import { useCallback, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import LoginButton from '../components/login/LoginButton';
+import Link from 'next/link';
+import * as loginActions from '../store/modules/login';
 
 export default function login() {
   const router = useRouter();
@@ -12,9 +12,9 @@ export default function login() {
   const getAccessToken = () => {
     const accessToken = router.query.token;
     if (accessToken) {
-      localStorage.setItem("token", accessToken);
+      localStorage.setItem('token', accessToken);
       Login();
-      router.push("/");
+      router.push('/');
     }
   };
 
@@ -34,12 +34,14 @@ export default function login() {
           <div className="login-box__title">종이비행기</div>
           <div className="login-box__sub">간편 로그인으로 편하게 날아가기</div>
           <div className="login-box__buttons">
-            <LoginButton
-              url="/image/naver.png"
-              text="네이버로 시작하기"
-              backgroundColor="#06C93A"
-              textColor="#fff"
-            />
+            <Link href="http://43.200.226.22:8080/oauth2/authorization/naver">
+              <LoginButton
+                url="/image/naver.png"
+                text="네이버로 시작하기"
+                backgroundColor="#06C93A"
+                textColor="#fff"
+              />
+            </Link>
             <Link href="http://43.200.226.22:8080/oauth2/authorization/kakao">
               <LoginButton
                 url="/image/kakao.jpg"
@@ -53,7 +55,7 @@ export default function login() {
       </div>
       <style jsx>{`
         .login__container {
-          background-image: url("/image/background-group.png");
+          background-image: url('/image/background-group.png');
           background-size: 100% 250%;
           background-position: center center;
           height: calc(100vh - 60px);
