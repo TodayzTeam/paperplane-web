@@ -1,10 +1,12 @@
 import css from "styled-jsx/css";
 import Image from "next/image";
+import { bdgData } from "../../data/background";
 
 interface cardImpl {
   data: Object;
   size: string;
 }
+
 const style = css`
   .container {
     display: flex;
@@ -99,17 +101,14 @@ const style = css`
 `;
 const PostCard = (props: cardImpl) => {
   const { data, size } = props;
+  // console.log(data?.postColor);
+  let bgd = data.length > 0 && bdgData[data?.postColor];
   return (
     <article>
       {size === "BIG" ? (
-        <div className="container big">
+        <div className="container big" style={{ background: data ? bgd : "" }}>
           <div className="left-box">
-            <div className="content big-content">
-              종이비행기는 익명의 편지를 불특정한 대상에게 랜덤으로 전달하는
-              서비스인데요, 내가 날린 편지가...종이비행기는 익명의 편지를
-              불특정한 대상에게 랜덤으로 전달하는 서비스인데요, 내가 날린
-              편지가...
-            </div>
+            <div className="content big-content">{data.content}</div>
           </div>
           <div className="big-line" />
           <div className="right-box">
@@ -121,20 +120,19 @@ const PostCard = (props: cardImpl) => {
                 width={60}
                 height={75}
               />
-              <h2 className="big-title">익명의 편지</h2>
-              <h4 className="big-date">YYYY.MM.DD</h4>
+              <h2 className="big-title">{data.title}</h2>
+              <h4 className="big-date">
+                {new Date(data.date).getFullYear()}년{" "}
+                {new Date(data.date).getMonth() + 1}월{" "}
+                {new Date(data.date).getDate()}일
+              </h4>
             </div>
           </div>
         </div>
       ) : (
         <div className="container small">
           <div className="left-box">
-            <div className="content small-content">
-              종이비행기는 익명의 편지를 불특정한 대상에게 랜덤으로 전달하는
-              서비스인데요, 내가 날린 편지가... 종이비행기는 익명의 편지를
-              불특정한 대상에게 랜덤으로 전달하는 서비스인데요, 내가 날린
-              편지가...
-            </div>
+            <div className="content small-content">{data.content}</div>
           </div>
           <div className="small-line" />
           <div className="right-box">
@@ -146,8 +144,12 @@ const PostCard = (props: cardImpl) => {
                 width={40}
                 height={50}
               />
-              <h2 className="small-title">익명의 편지</h2>
-              <h4 className="small-date">YYYY.MM.DD</h4>
+              <h2 className="small-title">{data.title}</h2>
+              <h4 className="small-date">
+                {new Date(data.date).getFullYear()}년{" "}
+                {new Date(data.date).getMonth() + 1}월{" "}
+                {new Date(data.date).getDate()}일
+              </h4>
             </div>
           </div>
         </div>

@@ -19,8 +19,9 @@ export default function group() {
     false,
   ]);
   const [groupList, setGroupList] = useState<Array<Object>>([]);
+  const [groupUser, setGroupUser] = useState<Array<Object>>([]);
   const [selectedGroup, setSelectedGroup] = useState<Object>({});
-  const [groupDetail, setGroupDetail] = useState<Object>({});
+  const [groupLetter, setGroupLetter] = useState<Array<Object>>([]);
   let accessToken: string | null;
   const router = useRouter();
 
@@ -28,10 +29,6 @@ export default function group() {
     // Perform localStorage action
     accessToken = localStorage.getItem("token");
   }
-
-  // useEffect(() => {
-  //   console.log(modalVisible);
-  // }, [modalVisible]);
 
   useEffect(() => {
     // 내가 속한 그룹
@@ -59,9 +56,22 @@ export default function group() {
       Axios.get(`/api/group/search/${selectedGroup[0].code}`)
         .then((response) => {
           console.log(response.data);
-          setGroupDetail(response.data);
+          // setGroupDetail(response.data);
         })
         .catch((error) => alert(error.response.data.message));
+      // 그룹원 목록
+      Axios.get(`/api/group/users/${selectedGroup[0].id}`).then((response) => {
+        setGroupUser(response.data);
+        // console.log(response.data);
+      });
+      Axios.get(`/api/post/list/${selectedGroup[0].id}`, {
+        headers: {
+          AccessToken: accessToken,
+        },
+      }).then((response) => {
+        console.log(response.data);
+        setGroupLetter(response.data);
+      });
     }
   }, [selectedGroup]);
 
@@ -126,116 +136,97 @@ export default function group() {
             style={{ margin: "100px 19px 110px" }}
           />
         </nav>
-        <div className="content-box">
-          <aside className="group-box">
-            <div className="list-title-box">
-              <h1 style={{ color: "#E890A5", margin: 0, fontSize: "40px" }}>
-                {selectedGroup[0]?.name}
-              </h1>
-            </div>
-            <div className="member-title">
-              <span style={{ fontSize: "18px", color: "#585858" }}>구성원</span>
-              <div className="mix-button" onClick={() => modalClickHandler(5)}>
-                <div style={{ color: "#787878" }}>초대 코드 복사</div>
-                <Image
-                  src="/image/link.svg"
-                  alt={"초대 코드 복사"}
-                  width={35}
-                  height={35}
-                />
+        {Groups.length > 0 ? (
+          <div className="content-box">
+            <aside className="group-box">
+              <div className="list-title-box">
+                <h1 style={{ color: "#E890A5", margin: 0, fontSize: "40px" }}>
+                  {selectedGroup[0]?.name}
+                </h1>
               </div>
-            </div>
-            {/* 구성원 컴포넌트 */}
-            <ul className="member-list">
-              <li>
-                <Image
-                  src="/image/profile.svg"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-              </li>
-              <li>
-                <Image
-                  src="/image/profile.svg"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-              </li>
-              <li>
-                <Image
-                  src="/image/profile.svg"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-              </li>
-              <li>
-                <Image
-                  src="/image/profile.svg"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-              </li>
-              <li>
-                <Image
-                  src="/image/profile.svg"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-              </li>
-              <li>
-                <Image
-                  src="/image/profile.svg"
-                  alt=""
-                  width={100}
-                  height={100}
-                />
-              </li>
-            </ul>
-            <button>
-              <div className="mix-button">
-                <Image
-                  style={{ marginLeft: "13px" }}
-                  src="/image/sign-out.svg"
-                  alt={"그룹 나가기"}
-                  width={35}
-                  height={35}
-                />
-                <div style={{ marginLeft: "5px", color: "#FD9D74" }}>
-                  그룹에서 나가기
+              <div className="member-title">
+                <span style={{ fontSize: "18px", color: "#585858" }}>
+                  구성원
+                </span>
+                <div
+                  className="mix-button"
+                  onClick={() => modalClickHandler(5)}
+                >
+                  <div style={{ color: "#787878" }}>초대 코드 복사</div>
+                  <Image
+                    src="/image/link.svg"
+                    alt={"초대 코드 복사"}
+                    width={35}
+                    height={35}
+                  />
                 </div>
               </div>
-            </button>
-          </aside>
-          <main className="letter-list">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-              }}
-            >
-              <div className="search-bar">
-                <Image src="/image/search.svg" alt="" width={24} height={24} />
+              {/* 구성원 컴포넌트 */}
+              <ul className="member-list">
+                {groupUser?.map((user, idx) => {
+                  return (
+                    <li key={idx}>
+                      <Image
+                        style={{ borderRadius: "50%" }}
+                        src={user.profileImageUrl}
+                        alt={user.name}
+                        width={100}
+                        height={100}
+                      />
+                    </li>
+                  );
+                })}
+              </ul>
+              <button type="button" onClick={() => modalClickHandler(6)}>
+                <div className="mix-button">
+                  <Image
+                    style={{ marginLeft: "13px" }}
+                    src="/image/sign-out.svg"
+                    alt={"그룹 나가기"}
+                    width={35}
+                    height={35}
+                  />
+                  <div style={{ marginLeft: "5px", color: "#FD9D74" }}>
+                    그룹에서 나가기
+                  </div>
+                </div>
+              </button>
+            </aside>
+            <main className="letter-list">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-end",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                  minWidth: "450px",
+                }}
+              >
+                <div className="search-bar">
+                  검색어
+                  <Image
+                    src="/image/search.svg"
+                    alt=""
+                    width={24}
+                    height={24}
+                  />
+                </div>
+                {groupLetter?.map((letter, idx) => {
+                  return <PostCard key={idx} data={letter} size={"BIG"} />;
+                })}
               </div>
-              <PostCard data={[]} size={"BIG"} />
-              <PostCard data={[]} size={"BIG"} />
-              <PostCard data={[]} size={"BIG"} />
-            </div>
-          </main>
-          <Modal
-            name={selectedGroup[0] && selectedGroup[0].name}
-            code={selectedGroup[0] && selectedGroup[0].code}
-            visible={modalVisible}
-            closeHandler={modalCloseHandler}
-            clickHandler={modalClickHandler}
-          />
-        </div>
+            </main>
+            <Modal
+              name={selectedGroup[0] && selectedGroup[0].name}
+              code={selectedGroup[0] && selectedGroup[0].code}
+              visible={modalVisible}
+              closeHandler={modalCloseHandler}
+              clickHandler={modalClickHandler}
+            />
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
       <style jsx>{`
         .container {
@@ -250,9 +241,10 @@ export default function group() {
         }
         .group-container {
           margin: 72px auto 30px;
+          min-height: 1000px;
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: flex-start;
           align-items: center;
         }
         .content-box {
@@ -309,7 +301,6 @@ export default function group() {
           display: flex;
           flex-wrap: wrap;
           width: 360px;
-          height: 240px;
           list-style: none;
           padding: 0;
           margin: 0 auto 50px;
@@ -325,11 +316,11 @@ export default function group() {
           width: 250px;
           height: 36px;
           display: flex;
-          justify-content: flex-end;
+          justify-content: space-between;
           align-items: center;
           border: 1px solid var(--color-gray-02);
           border-radius: 18px;
-          padding: 6px 14px;
+          padding: 6px 14px 6px 25px;
           margin-right: 20px;
           margin-bottom: 50px;
         }
