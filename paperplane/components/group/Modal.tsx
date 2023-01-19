@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import Axios from "axios";
 
@@ -16,6 +16,12 @@ const Modal = ({
 
   const [groupName, setGroupName] = useState<string>("");
   const [groupCode, setGroupCode] = useState<string>("");
+
+  useEffect(() => {
+    if (!visible.includes(true)) {
+      bgd.current.style = "z-index: -1";
+    }
+  }, [visible]);
 
   if (typeof window !== "undefined") {
     accessToken = localStorage.getItem("token");

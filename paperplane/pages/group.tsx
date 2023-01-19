@@ -1,14 +1,15 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import Image from "next/image";
 import GroupCard from "../components/group/GroupCard";
 import PostCard from "../components/PostCard";
 import Modal from "../components/group/Modal";
 import { useEffect, useState } from "react";
 import Axios from "axios";
+import { useRouter } from "next/router";
 
 export default function group() {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [modalVisible, setModalVisible] = useState<Array<boolean>>([
-    true,
+    false,
     false,
     false,
     false,
@@ -17,7 +18,11 @@ export default function group() {
     false,
     false,
   ]);
+  const [groupList, setGroupList] = useState<Array<Object>>([]);
+  const [selectedGroup, setSelectedGroup] = useState<Object>({});
+  const [groupDetail, setGroupDetail] = useState<Object>({});
   let accessToken: string | null;
+  const router = useRouter();
 
   if (typeof window !== "undefined") {
     // Perform localStorage action
@@ -28,7 +33,6 @@ export default function group() {
   //   console.log(modalVisible);
   // }, [modalVisible]);
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     // 내가 속한 그룹
     Axios.get("/api/group/mygroup", {
@@ -37,12 +41,29 @@ export default function group() {
       },
     })
       .then((response) => {
-        // console.log(response.data);
+        console.log(response.data);
+        setGroupList(response.data);
+        setSelectedGroup({ 0: response.data[0] });
       })
       .catch((error) => {
         alert(error.response.data.message);
+        if (error.response.data.status === 401) {
+          router.push("/login");
+        }
       });
   }, []);
+
+  useEffect(() => {
+    if (selectedGroup[0] && selectedGroup[0].id) {
+      // 그룹 상세 정보
+      Axios.get(`/api/group/search/${selectedGroup[0].code}`)
+        .then((response) => {
+          console.log(response.data);
+          setGroupDetail(response.data);
+        })
+        .catch((error) => alert(error.response.data.message));
+    }
+  }, [selectedGroup]);
 
   // modal click
   const modalClickHandler = (modalNumber: number) => {
@@ -54,28 +75,48 @@ export default function group() {
     setModalVisible(new Array(8).fill(false));
   };
 
+  const groupHandler = (tag: Object) => {
+    console.log("selectedGroup : " + tag.name);
+    setSelectedGroup(groupList.filter((group) => group.id === tag.id));
+  };
+
+  const Groups = groupList.map((group, idx) => {
+    return (
+      <li
+        className="tag-container"
+        style={{ display: "inline-block", marginRight: "20px" }}
+        key={idx}
+      >
+        <button
+          style={{
+            minWidth: "92px",
+            height: "41px",
+            backgroundColor:
+              selectedGroup[0]?.id === group?.id
+                ? "var(--color-primary-deep)"
+                : "var(--color-primary-default)",
+            borderRadius: "20px",
+            color: "#fff",
+            padding: "0 30px",
+            fontSize: "18px",
+            outline: 0,
+            border: 0,
+          }}
+          onClick={() => groupHandler(group)}
+          type="button"
+        >
+          {group.name}
+        </button>
+      </li>
+    );
+  });
+
   return (
     <div className="container">
       <div className="title">그룹____</div>
       <div className="group-container">
         <nav style={{ width: "920px", display: "flex", alignItems: "center" }}>
-          <ul className="group-list">
-            <li className="tag-container">
-              <button className="tag-button">잇타</button>
-            </li>
-            <li className="tag-container">
-              <button className="tag-button">오늘의팀</button>
-            </li>
-            <li className="tag-container">
-              <button className="tag-button">오늘의팀오늘의팀</button>
-            </li>
-            <li className="tag-container">
-              <button className="tag-button">오늘의팀오늘의팀오늘의팀</button>
-            </li>
-            <li className="tag-container">
-              <button className="tag-button">오늘의팀오늘의팀오늘의팀</button>
-            </li>
-          </ul>
+          <ul className="group-list">{Groups}</ul>
           <Image
             src="/image/group-add.svg"
             alt={"그룹 추가"}
@@ -89,21 +130,19 @@ export default function group() {
           <aside className="group-box">
             <div className="list-title-box">
               <h1 style={{ color: "#E890A5", margin: 0, fontSize: "40px" }}>
-                오늘의팀
+                {selectedGroup[0]?.name}
               </h1>
             </div>
             <div className="member-title">
               <span style={{ fontSize: "18px", color: "#585858" }}>구성원</span>
-              <div className="mix-button">
+              <div className="mix-button" onClick={() => modalClickHandler(5)}>
                 <div style={{ color: "#787878" }}>초대 코드 복사</div>
-                <button>
-                  <Image
-                    src="/image/link.svg"
-                    alt={"초대 코드 복사"}
-                    width={35}
-                    height={35}
-                  />
-                </button>
+                <Image
+                  src="/image/link.svg"
+                  alt={"초대 코드 복사"}
+                  width={35}
+                  height={35}
+                />
               </div>
             </div>
             {/* 구성원 컴포넌트 */}
@@ -190,8 +229,8 @@ export default function group() {
             </div>
           </main>
           <Modal
-            name="오늘의 팀"
-            code="45cca849-073e-4740-b228-72a9be8e350f"
+            name={selectedGroup[0] && selectedGroup[0].name}
+            code={selectedGroup[0] && selectedGroup[0].code}
             visible={modalVisible}
             closeHandler={modalCloseHandler}
             clickHandler={modalClickHandler}
@@ -230,20 +269,6 @@ export default function group() {
           overflow-x: scroll;
           white-space: nowrap;
           padding: 0;
-        }
-        .tag-container {
-          display: inline-block;
-          margin-right: 20px;
-        }
-        .tag-button {
-          min-width: 92px;
-          height: 41px;
-          background-color: var(--color-primary-default);
-          border-radius: 20px;
-          /* color */
-          color: #fff;
-          padding: 0 30px;
-          font-size: 18px;
         }
         .group-box {
           flex-basis: 390px;
