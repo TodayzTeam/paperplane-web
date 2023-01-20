@@ -1,6 +1,6 @@
 import css from "styled-jsx/css";
 import Image from "next/image";
-import { bdgData } from "../../data/background";
+import { bdgData } from "../json/background";
 
 interface cardImpl {
   data: Object;
