@@ -1,16 +1,12 @@
 import { useState } from 'react';
 
 interface tagProps {
-  color?: string;
   keyword: string;
   onClick: () => void;
 }
 
-const Tag = (props: tagProps) => {
-  const { color = '#E890A5', keyword, onClick } = props;
-  const [isChecked, setIsChecked] = useState(false);
-  const backColor = isChecked ? '#E890A5' : '#fff';
-  const textColor = isChecked ? '#fff' : '#585858';
+const NewTag = (props: tagProps) => {
+  const { keyword, onClick } = props;
 
   return (
     <>
@@ -18,23 +14,23 @@ const Tag = (props: tagProps) => {
         className="tag__container"
         onClick={() => {
           onClick();
-          setIsChecked(!isChecked);
         }}
       >
-        {keyword}
-        {isChecked ? ' v' : ' +'}
+        '{keyword}' 추가하기
+        <img src="/image/pink-plus.svg" />
       </div>
       <style jsx>{`
         .tag__container {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           border-radius: 20px;
           border: 1px solid #e890a5;
-          background-color: ${backColor};
-          color: ${textColor};
+          background-color: none;
+          color: #585858;
           font-size: 15px;
           padding: 10px 25px;
           cursor: pointer;
+          gap: 10px;
 
           &:hover {
             opacity: 0.8;
@@ -46,4 +42,4 @@ const Tag = (props: tagProps) => {
   );
 };
 
-export default Tag;
+export default NewTag;
