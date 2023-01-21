@@ -10,7 +10,6 @@ import {
 import Header from '../components/signup/Header';
 import { MomoizedTagList } from '../components/signup/tag/TagList';
 import { interest } from '../components/signup/types';
-import { setToken } from '../util/api';
 import * as loginActions from '../store/modules/login';
 import NewTag from '../components/signup/tag/NewTag';
 
@@ -89,7 +88,6 @@ export default function signup() {
   };
 
   useEffect(() => {
-    setToken(localStorage.getItem('token'));
     getRecommend();
   }, []);
 
