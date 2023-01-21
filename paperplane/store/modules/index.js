@@ -1,9 +1,15 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
-
+import storage from 'redux-persist/lib/storage';
+import { persistReducer } from 'redux-persist';
 import login from './login';
 
-const reducer = (state, action) => {
+const persistConfig = {
+  key: 'login',
+  storage,
+};
+
+export const reducer = (state, action) => {
   if (action.type === HYDRATE) {
     return {
       ...state,
@@ -15,4 +21,4 @@ const reducer = (state, action) => {
   })(state, action);
 };
 
-export default reducer;
+export const persistedReducer = persistReducer(persistConfig, login);

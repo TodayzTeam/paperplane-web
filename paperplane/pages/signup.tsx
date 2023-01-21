@@ -1,130 +1,112 @@
-import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Button from '../components/home/Button';
-import Tag from '../components/signup/Tag';
+import {
+  getRecommendInterest,
+  searchInterest,
+  setUserInterest,
+} from '../components/signup/api';
+import Header from '../components/signup/Header';
+import { MomoizedTagList } from '../components/signup/tag/TagList';
+import { interest } from '../components/signup/types';
+import { setToken } from '../util/api';
+import * as loginActions from '../store/modules/login';
+import NewTag from '../components/signup/tag/NewTag';
 
 export default function signup() {
+  const dispatch = useDispatch();
   const router = useRouter();
-  const [recommendInterest, setRecommendInterest] = useState([
-    { id: 1, keyword: '고양이' },
-    { id: 2, keyword: '고양이2' },
-    { id: 3, keyword: '고양이3' },
-  ]);
-  const [searchedInterest, setSearchedInterest] = useState([]);
-  const [selectedInterest, setSelectedInterest] = useState([]);
+  const [keyword, setKeyword] = useState('');
+  const [searchedInterest, setSearchedInterest] = useState(Array<interest>);
+  const [recommendInterest, setRemmendInterest] = useState(Array<interest>);
+  const [selectedInterest, setSelectedInterest] = useState(Array<interest>);
 
-  const onSubmitInterest = () => {
-    setUserInterest();
-    //router.push('/');
-  };
+  const onToggleSelectedInterest = useCallback(
+    (interest: interest) => {
+      const { id } = interest;
 
-  const onAddSelectedTag = (tag) => {
-    let isExist = false;
-    selectedInterest.forEach(({ id }) => {
-      if (id === tag.id) isExist = true;
-    });
+      let isExist = false;
+      selectedInterest.forEach((interest, idx) => {
+        if (interest.id === id) {
+          isExist = true;
+          const tempInterests = [...selectedInterest];
+          tempInterests.splice(idx, 1);
+          setSelectedInterest(tempInterests);
+        }
+      });
 
-    if (!isExist) {
-      const newSelectedInterest = [...selectedInterest, tag];
-      setSelectedInterest(newSelectedInterest);
-    }
-  };
+      if (!isExist) {
+        const newInterests = [...selectedInterest, interest];
+        setSelectedInterest(newInterests);
+      }
+    },
+    [selectedInterest]
+  );
 
-  const onRemoveSelectedTag = ({ id }) => {
-    const newSelectedInterest = selectedInterest.filter((tag) => tag.id !== id);
-    setSelectedInterest(newSelectedInterest);
-  };
+  const Login = useCallback(() => {
+    dispatch(loginActions.login());
+  }, [dispatch]);
 
-  let timer = null;
-  const onChangeHandler = (e) => {
+  // 관심사 검색 이벤트 & api 호출
+  let timer: ReturnType<typeof setTimeout>;
+  const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      searchInterest(e.target.value);
+    timer = setTimeout(async () => {
+      const keyword = e.target.value;
+      const searchedData = await searchInterest(keyword);
+      if (!searchedData.length) {
+        setKeyword(keyword);
+      }
+      setSearchedInterest(searchedData);
     }, 500);
   };
 
-  const setUserInterest = async () => {
-    const keywordArr = selectedInterest.map(({ keyword }) => keyword);
-    const formData = new FormData();
-    formData.append('keyword', JSON.stringify(keywordArr));
+  // 추천 관심사
+  const getRecommend = async () => {
+    const interestList = (await getRecommendInterest()) || [];
+    setRemmendInterest(interestList);
+  };
 
-    try {
-      const res = await axios.post('/api/user/interest', formData, {
-        headers: {
-          accessToken: `${localStorage.getItem('token')}`,
-        },
-      });
-      if (res.status === 200) {
-      }
-    } catch (error) {
-      console.log(error);
+  // 관심사 등록
+  const setInterest = async () => {
+    const keywords = selectedInterest.map(({ keyword }) => keyword);
+    if (await setUserInterest(keywords)) {
+      alert('추가되었습니다!');
+      Login();
+      router.push('/');
+    } else {
+      alert('잠시 후 다시 시도해 주세요');
     }
   };
 
-  const getRecommendInterest = async () => {
-    try {
-      const res = await axios.get('/api/interest/recommend', {
-        headers: {
-          'Content-type': 'application/json',
-          Accept: 'application/json',
-        },
-      });
-      if (res.status === 200) {
-        setRecommendInterest(res.data);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const searchInterest = async (keyword: string) => {
-    try {
-      const res = await axios.get(`/interest/search/${keyword}`, {
-        headers: {
-          'Content-type': 'application/json',
-        },
-      });
-      if (res.status === 200) {
-        setSearchedInterest(res.data);
-      }
-    } catch (error) {
-      console.log(error);
+  const setNewInterest = async (keyword: string) => {
+    if (await setUserInterest([keyword])) {
+      Login();
+    } else {
+      alert('잠시 후 다시 시도해 주세요');
     }
   };
 
   useEffect(() => {
-    getRecommendInterest();
+    setToken(localStorage.getItem('token'));
+    getRecommend();
   }, []);
 
   return (
     <>
       <div className="signup__container">
         <div className="left-box">
-          <div className="left-box__sub">
-            당신에게 꼭 맞는 편지를 보내드릴게요
-          </div>
-          <div className="left-box__title">
-            관심 있는 주제를
-            <br />
-            선택해주세요
-          </div>
-          <div className="tags">
-            {selectedInterest.map(({ id, keyword }) => (
-              <Tag
-                key={id}
-                keyword={keyword}
-                onClick={() => {
-                  onRemoveSelectedTag({ id });
-                }}
-              />
-            ))}
-          </div>
+          <Header />
+          <MomoizedTagList
+            tagList={selectedInterest}
+            onToggle={onToggleSelectedInterest}
+          />
           <Button
             color="#3D5470"
             text="완료"
             onClick={() => {
-              onSubmitInterest();
+              setInterest();
             }}
           />
         </div>
@@ -136,37 +118,39 @@ export default function signup() {
               placeholder="관심 있는 주제를 검색하세요"
               onChange={onChangeHandler}
             />
-            <div className="tags">
-              {searchedInterest.map((tag) => (
-                <Tag
-                  key={tag.id}
-                  keyword={tag.keyword}
-                  onClick={() => {
-                    onAddSelectedTag(tag);
-                  }}
-                />
-              ))}
-            </div>
+            {searchedInterest.length === 0 && keyword.length !== 0 && (
+              <NewTag
+                keyword={keyword}
+                onClick={() => {
+                  setNewInterest(keyword);
+                  setKeyword('');
+                }}
+              />
+            )}
+            <MomoizedTagList
+              tagList={searchedInterest}
+              onToggle={onToggleSelectedInterest}
+            />
           </div>
           <div>
             <div className="right-box__recommend">
               <div className="right-box__text">
                 다른 사람들은 이런 단어를 선택했어요!
               </div>
-              <div className="tags">
-                {recommendInterest.map((tag) => (
-                  <Tag
-                    key={tag.id}
-                    keyword={tag.keyword}
-                    onClick={() => {
-                      onAddSelectedTag(tag);
-                    }}
-                  />
-                ))}
-              </div>
+              <MomoizedTagList
+                tagList={recommendInterest}
+                onToggle={onToggleSelectedInterest}
+              />
             </div>
           </div>
-          <div className="right-box__next">다음에 하기</div>
+          <div
+            className="right-box__next"
+            onClick={() => {
+              router.push('/');
+            }}
+          >
+            다음에 하기
+          </div>
         </div>
       </div>
       <style jsx>{`
@@ -185,17 +169,7 @@ export default function signup() {
             flex-direction: column;
             justify-content: space-around;
             gap: 20px;
-
             width: 400px;
-            &__sub {
-              font-size: 18px;
-              color: #787878;
-            }
-            &__title {
-              font-size: 40px;
-              font-weight: 700;
-              color: #585858;
-            }
           }
 
           .right-box {
@@ -233,13 +207,6 @@ export default function signup() {
               text-decoration: underline;
               cursor: pointer;
             }
-          }
-
-          .tags {
-            width: 100%;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
           }
         }
       `}</style>
