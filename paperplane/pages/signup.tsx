@@ -80,7 +80,7 @@ export default function signup() {
     }
   };
 
-  const setNewInterest = async (keyword) => {
+  const setNewInterest = async (keyword: string) => {
     if (await setUserInterest([keyword])) {
       Login();
     } else {
