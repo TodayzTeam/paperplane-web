@@ -3,15 +3,21 @@ import PostCard from "../PostCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
+import Axios from "axios";
 
 const Carousel = () => {
   const [domLoaded, setDomLoaded] = useState(false);
+  const [letters, setLetters] = useState([]);
 
   const prevRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setDomLoaded(true);
+    Axios.get("/api/post/popular").then((response) => {
+      console.log(response.data);
+      setLetters(response.data);
+    });
   }, []);
 
   return (
@@ -38,21 +44,11 @@ const Carousel = () => {
             // }}
           >
             <div className="swiper-wrapper">
-              <SwiperSlide className="swiper-slide">
-                <PostCard data={[]} size={"SMALL"} />
-              </SwiperSlide>
-              <SwiperSlide className="swiper-slide">
-                <PostCard data={[]} size={"SMALL"} />
-              </SwiperSlide>
-              <SwiperSlide className="swiper-slide">
-                <PostCard data={[]} size={"SMALL"} />
-              </SwiperSlide>
-              <SwiperSlide className="swiper-slide">
-                <PostCard data={[]} size={"SMALL"} />
-              </SwiperSlide>
-              <SwiperSlide className="swiper-slide">
-                <PostCard data={[]} size={"SMALL"} />
-              </SwiperSlide>
+              {letters?.map((letter) => (
+                <SwiperSlide className="swiper-slide">
+                  <PostCard data={letter} size={"SMALL"} />
+                </SwiperSlide>
+              ))}
             </div>
             {/* <div className="swiper-button-prev" ref={prevRef}></div>
             <div className="swiper-button-next" ref={nextRef}></div> */}

@@ -1,11 +1,21 @@
 import css from "styled-jsx/css";
 import Image from "next/image";
-import { bdgData } from "../json/background";
+import { bgdData } from "../json/background";
+import Link from "next/link";
 
 interface cardImpl {
-  data: Object;
+  data: PostType;
   size: string;
 }
+
+type PostType = {
+  id: number;
+  title: string;
+  content: string;
+  date: Date;
+  postColor: string;
+  likeCount: number;
+};
 
 const style = css`
   .container {
@@ -101,10 +111,16 @@ const style = css`
 `;
 const PostCard = (props: cardImpl) => {
   const { data, size } = props;
-  // console.log(data?.postColor);
-  let bgd = data.length > 0 && bdgData[data?.postColor];
+  console.log(data);
+  let bgd = Object.keys(data).length > 0 && bgdData[data.postColor];
+
   return (
-    <article>
+    <Link
+      href={{
+        pathname: `/letters/${data.id}`,
+        query: { background: bgd },
+      }}
+    >
       {size === "BIG" ? (
         <div className="container big" style={{ background: data ? bgd : "" }}>
           <div className="left-box">
@@ -156,7 +172,7 @@ const PostCard = (props: cardImpl) => {
       )}
 
       <style jsx>{style}</style>
-    </article>
+    </Link>
   );
 };
 
