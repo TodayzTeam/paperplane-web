@@ -15,8 +15,8 @@ export default function AlarmDiv({ title, data }: Props) {
       <div className="alarm__container">
         <div className="title">{title}</div>
         <div className="toggles">
-          <Toggle initialState={true} />
-          <Toggle initialState={true} />
+          <Toggle initialState={web} />
+          <Toggle initialState={email} />
         </div>
       </div>
       <style jsx>{`

@@ -1,10 +1,27 @@
+import { useEffect, useState } from 'react';
 import Button from '../components/home/Button';
 import AlarmDiv from '../components/profile/alarm/AlarmDiv';
-import Toggle from '../components/profile/alarm/Toggle';
 import ProfileTitle from '../components/profile/ProfileTitle';
+import { initialprofileInfo, profileInfo } from '../components/profile/type';
 import Tag from '../components/signup/tag/Tag';
+import { publicApi } from '../util/api';
 
 export default function profile() {
+  const [profile, setProfile] = useState<profileInfo>(initialprofileInfo);
+
+  const getProfile = async () => {
+    try {
+      const profile = await publicApi.get('/user/profile');
+      setProfile(profile.data);
+    } catch (error) {
+      alert('정보를 불러올 수 없습니다!');
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
   return (
     <>
       <div className="user__container">
@@ -17,11 +34,15 @@ export default function profile() {
               <div className="box__input">
                 <div className="input__container">
                   <div className="input__title">이름</div>
-                  <input type="text" />
+                  <input type="text" value={profile.name} onChange={() => {}} />
                 </div>
                 <div className="input__container">
                   <div className="input__title">이메일</div>
-                  <input type="email" />
+                  <input
+                    type="email"
+                    value={profile.email}
+                    onChange={() => {}}
+                  />
                   <button className="email__button">이메일 변경</button>
                 </div>
               </div>
@@ -30,7 +51,11 @@ export default function profile() {
           <div className="main__keyword">
             <ProfileTitle title="나의 관심 키워드" />
             <div className="keyword__box">
-              <Tag keyword="게임" onClick={() => {}} />
+              {profile.userInterests.length > 0 &&
+                profile.userInterests.map(({ keyword }, idx) => (
+                  <Tag keyword={keyword} onClick={() => {}} key={idx} />
+                ))}
+              <Tag keyword="" onClick={() => {}} />
             </div>
             <div className="keyword__notice">
               선택한 키워드와 관련된 편지 위주로 받아요.
@@ -42,16 +67,28 @@ export default function profile() {
               <div>알림 센터</div>
               <div>이메일</div>
             </div>
-            <AlarmDiv title="편지 수신" data={{ web: true, email: false }} />
-            <AlarmDiv title="답장" data={{ web: true, email: false }} />
+            <AlarmDiv
+              title="편지 수신"
+              data={{ web: profile.isReadWeb, email: profile.isReadEmail }}
+            />
+            <AlarmDiv
+              title="답장"
+              data={{
+                web: profile.isRepliedWeb,
+                email: profile.isRepliedEmail,
+              }}
+            />
             <hr />
             <AlarmDiv
               title="이 달의 편지 선정"
-              data={{ web: true, email: false }}
+              data={{
+                web: profile.isPopularLetterWeb,
+                email: profile.isPopularLetterEmail,
+              }}
             />
             <AlarmDiv title="이 달의 편지" data={{ web: true, email: false }} />
             <hr />
-            <AlarmDiv title="그룹원 알림" data={{ web: true, email: false }} />
+            <AlarmDiv title="그룹원 알림" data={{ web: false, email: false }} />
           </div>
         </main>
         <div className="button__wrapper">
@@ -95,7 +132,8 @@ export default function profile() {
                 height: 150px;
                 border-radius: 50%;
                 border: 3px solid #bababa;
-                background: url('/image/letter.png');
+                background: url(${`${profile.profileImageUrl}` ||
+                '/image/letter.png'});
               }
 
               &__input {
@@ -122,6 +160,7 @@ export default function profile() {
                     color: #585858;
                     font-size: 16px;
                     font-family: 'Roboto';
+                    width: 250px;
                   }
 
                   .email__button {
