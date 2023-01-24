@@ -11,11 +11,6 @@ export async function getSentPost(page: number) {
   return res.data;
 }
 
-export async function getLikedPost(page: number) {
-  const res = await publicApi.get(`/post/sent?page=${page}`);
-  return res.data;
-}
-
 export async function getReadedPosts(page: number) {
   const res = await publicApi.get(`/post/received/read?page=${page}`);
 
@@ -24,5 +19,10 @@ export async function getReadedPosts(page: number) {
 
 export async function getGroupSentPost(page: number) {
   const res = await publicApi.get(`/post/sent/group?page=${page}`);
+  return res.data;
+}
+
+export async function getLikedPost(page: number) {
+  const res = await publicApi.get(`/post/liked?page=${page}`);
   return res.data;
 }
