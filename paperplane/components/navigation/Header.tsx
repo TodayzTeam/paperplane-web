@@ -9,7 +9,6 @@ import * as loginActions from '../../store/modules/login';
 const Header = () => {
   const dispatch = useDispatch();
   const isLogin = useSelector(({ value }) => value);
-  console.log(isLogin);
 
   const logout = useCallback(() => {
     dispatch(loginActions.logout());

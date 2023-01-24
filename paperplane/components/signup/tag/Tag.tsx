@@ -40,6 +40,7 @@ const Tag = (props: tagProps) => {
           padding: 10px 25px;
           cursor: pointer;
           gap: 10px;
+          max-height: 45px;
 
           &:hover {
             opacity: 0.8;
