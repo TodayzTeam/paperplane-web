@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Axios from "axios";
+import Preview from "../../components/letter/preview";
 
 const GROUP_DUMMY = [
   {
@@ -15,12 +16,13 @@ const GROUP_DUMMY = [
 ];
 const KEYWORD_DUMMY = ["해외여행", "여행", "책"];
 
-export default function Newletter() {
+export default function reply() {
+  // 그룹 답장인지
   const router = useRouter();
+  const originalId = router.query.data || "";
   const colorType = ["RED", "GREEN", "BLUE", "BLACK"];
-  const [groupList, setGroupList] = useState<Array<Object>>([]);
-  // const [accessToken, setAccessToken] = useState<string | null>("");
   let accessToken: string | null;
+  const [visible, setVisible] = useState<boolean>(false);
 
   type InputType = {
     title: string;
@@ -28,40 +30,72 @@ export default function Newletter() {
     recipient: string;
     hashtag: Array<string>;
   };
+  type letterType = {
+    id: string;
+    title: string;
+    content: string;
+    date: Date;
+    isLike: boolean;
+  };
 
-  const [result, setResult] = useState<Array<string>>(KEYWORD_DUMMY);
   const [inputs, setInputs] = useState<InputType | null>({
     title: "",
     content: "",
     recipient: "",
     hashtag: [],
   });
+  const [originalLetter, setOriginalLetter] = useState<letterType>({
+    id: "",
+    title: "",
+    content: "",
+    date: new Date(),
+    isLike: false,
+  });
 
   const titleInputRef = useRef<undefined>(null);
 
-  const { title, content, recipient, hashtag } = inputs;
+  const { title, content, recipient } = inputs;
 
   if (typeof window !== "undefined") {
-    // Perform localStorage action
     accessToken = localStorage.getItem("token");
   }
 
   useEffect(() => {
-    if (accessToken) {
-      Axios.get("/api/group/mygroup", {
+    // original 편지의 title, content, 좋아요, date
+    const formData = new FormData();
+    formData.append("postIdList", String(originalId));
+    Axios.all([
+      Axios.get(`/api/post/info/${originalId}`, {
         headers: {
           AccessToken: accessToken,
         },
-      }).then((response) => {
-        // console.log(response.data);
-        setGroupList(response.data);
+      }),
+      Axios.post(`/api/post/option`, formData, {
+        headers: {
+          AccessToken: accessToken,
+        },
+      }),
+    ]).then((response) => {
+      setOriginalLetter({
+        ...originalLetter,
+        ["id"]: String(originalId),
+        ["title"]: response[0].data[0].title,
+        ["content"]: response[0].data[0].content,
+        ["date"]: response[0].data[0].date,
+        ["isLike"]: response[1].data[0].isLike,
       });
-      Axios.get("/api/interest/recommend").then((response) => {
-        // console.log(response.data.map((d) => d.keyword));
-        setResult(response.data.map((d) => d.keyword));
-      });
-    }
+      if (response[0].data[0].group.id !== null) {
+        setInputs({
+          ...inputs,
+          ["recipient"]: response[0].data[0].group.code,
+        });
+      }
+    });
   }, []);
+
+  useEffect(() => {
+    console.log(originalLetter);
+  }, [originalLetter]);
 
   const inputHandler = (e: any) => {
     const { value, name } = e.target;
@@ -69,6 +103,10 @@ export default function Newletter() {
       ...inputs,
       [name]: value,
     });
+  };
+
+  const modalCloseHandler = () => {
+    setVisible(false);
   };
 
   const titleHandler = (e: any) => {
@@ -81,59 +119,23 @@ export default function Newletter() {
     }
   };
 
-  const recipientHandler = (e: any) => {
-    // console.log(e.target.parentElement.classList);
-    if (e.target.parentElement.classList.contains("active")) {
-      e.target.parentElement.classList.remove("active");
-    } else {
-      e.target.parentElement.classList.add("active");
-    }
-  };
-
-  const onClick = (e: any, groupCode: string, groupName: string) => {
-    const btn = e.target.parentElement.parentElement.children[0];
-    btn.innerText = groupName;
-    btn.parentElement.classList.remove("active");
-    // groupCode : 전체(''), 나머지 고유 groupId 값
-    if (groupCode !== "")
-      setInputs({
-        ...inputs,
-        ["recipient"]: groupCode,
-      });
-  };
-
-  const hashtagHandler = (e: any, method: string) => {
-    // add : 더하기
-    // remove : 삭제
-    if (method == "add") {
-      setInputs({
-        ...inputs,
-        ["hashtag"]: [...hashtag, e.target.innerText.slice(1)],
-      });
-    } else {
-      setInputs({
-        ...inputs,
-        ["hashtag"]: hashtag.filter(
-          (word) => word !== e.target.innerText.slice(1)
-        ),
-      });
-    }
-  };
-
   const submitHandler = () => {
+    // 여기 확인해봐야 함
     const formdata = new FormData();
     const color = colorType[Math.floor(Math.random() * 3)];
     formdata.append("title", title);
     formdata.append("content", content);
     if (recipient !== "") {
+      console.log("그룹");
       formdata.append("receiveGroup", "GROUP");
       formdata.append("groupCode", recipient);
     } else {
+      console.log("랜덤");
       formdata.append("receiveGroup", "RAND");
     }
     formdata.append("color", color);
-    formdata.append("isReply", "false");
-    formdata.append("keyword", JSON.stringify(hashtag));
+    formdata.append("isReply", "true");
+    formdata.append("originId", String(originalId));
 
     Axios.post(`/api/post/create`, formdata, {
       headers: {
@@ -152,10 +154,18 @@ export default function Newletter() {
   return (
     <div className="container">
       <form onSubmit={submitHandler}>
-        <div className="title">편지쓰기____</div>
+        <div className="title">답장쓰기____</div>
         <main className="write-container">
           <div className="load-box">
-            <button className="load-letter">임시저장한 편지 불러오기</button>
+            <button
+              className="load-letter"
+              type="button"
+              onClick={() => {
+                setVisible(true);
+              }}
+            >
+              원본 편지 보기
+            </button>
           </div>
           <section className="write-wrapper">
             {/* 편지 쓰는 컴포넌트 */}
@@ -191,120 +201,20 @@ export default function Newletter() {
               />
               <div className="back-box" />
             </div>
-            <div
-              style={{
-                border: "1px solid var(--color-gray-02)",
-                marginBottom: "100px",
-                width: "1000px",
-                background: "var(--color-gray-02)",
-              }}
-            />
           </section>
-          <section className="recipient-wrapper">
-            <span className="send-title">받는 사람</span>
-            <div className="recipient-content">
-              <div className="dropdown">
-                <button
-                  className="recipient-label"
-                  type="button"
-                  onClick={recipientHandler}
-                >
-                  전체
-                </button>
-                <ul className="recipient-options">
-                  <>
-                    <li
-                      className="option"
-                      onClick={(event) => onClick(event, "", "전체")}
-                    >
-                      전체
-                    </li>
-                    {groupList.map((group, idx) => {
-                      return (
-                        <li
-                          key={idx}
-                          className="option"
-                          onClick={(event) =>
-                            onClick(event, group.code, group.name)
-                          }
-                        >
-                          {group.name}
-                        </li>
-                      );
-                    })}
-                  </>
-                </ul>
-              </div>
-              <div style={{ display: "flex", flexFlow: "column" }}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p style={{ margin: "0 36px 0 0", width: "65px" }}>
-                    #해시태그
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      margin: 0,
-                      color: "var(--color-gray-02)",
-                    }}
-                  >
-                    해시태그에 관심이 있는 사람들에게 편지가 전송돼요.
-                  </p>
-                </div>
-                <div className="hash-tag-container">
-                  <div className="search-box">
-                    <input
-                      className="hash-tag"
-                      type="text"
-                      placeholder="검색어"
-                    />
-                  </div>
-                  <div className="result-box">
-                    {result
-                      ?.filter((all) => !hashtag.includes(all))
-                      .map((word, idx) => {
-                        return (
-                          <span
-                            key={idx}
-                            className="result-tag"
-                            onClick={(event) => hashtagHandler(event, "add")}
-                          >
-                            #{word}
-                          </span>
-                        );
-                      })}
-                  </div>
-                  <div className="result-box">
-                    {hashtag?.map((word, idx) => {
-                      return (
-                        <span
-                          key={idx}
-                          className="select-tag"
-                          onClick={(event) => hashtagHandler(event, "remove")}
-                        >
-                          #{word}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-          <div
-            style={{
-              border: "1px solid var(--color-gray-02)",
-              marginBottom: "120px",
-              width: "1000px",
-              background: "var(--color-gray-02)",
-            }}
-          />
           <section className="submit-container">
             <button type="button" onClick={submitHandler}>
               보내기
             </button>
           </section>
         </main>
+        <Preview
+          letter={originalLetter}
+          visible={visible}
+          closeHandler={modalCloseHandler}
+        />
       </form>
+
       <style jsx>{`
         .container {
           font-family: "Pretendard" !important;
@@ -383,12 +293,13 @@ export default function Newletter() {
           border-radius: 20px;
         }
         .load-letter {
-          border: 1px solid var(--color-secondary-deep);
-          color: var(--color-secondary-deep);
-          font-size: 18px;
+          border: 1px solid var(--color-gray-04);
+          color: var(--color-gray-04);
+          font-size: 16px;
           background: none;
           border-radius: 25px;
           padding: 15px 30px;
+          font-weight: 700;
         }
         .write-title-box {
           display: flex;

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import Image from "next/image";
 import GroupCard from "../components/group/GroupCard";
-import PostCard from "../components/PostCard";
+import PostCard from "../components/letter/PostCard";
 import Modal from "../components/group/Modal";
 import { useEffect, useState } from "react";
 import Axios from "axios";

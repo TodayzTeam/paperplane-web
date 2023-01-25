@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import PostCard from "../../components/PostCard";
+import PostCard from "../../components/letter/PostCard";
 
 type letterType = {
   title: string;
@@ -108,24 +108,47 @@ function LetterDetailPage() {
         // 받은 편지
         setIsReceived(true);
         console.log("받은 편지");
-        // } else if (response[1].data[0].isReply) {
-      } else if (true) {
-        // 답장 편지
-        // if (response[1].data[0].isReply) setOriginalLetter(response[0].data[1]);
-        setOriginalLetter(response[0].data[1]);
-        // setIsReply(response[1].data[0].isReply);
-        setIsReply(true);
-        console.log("hrer");
+      } else if (response[1].data[0].isReply) {
+        console.log("답장 편지");
+        // } else if (true) {
+        if (response[1].data[0].isReply) setOriginalLetter(response[0].data[1]);
+        // setOriginalLetter(response[0].data[1]);
+        setIsReply(response[1].data[0].isReply);
+        // setIsReply(true);
       }
 
-      setIsLike(response[1].data[0].isLike);
+      setIsLike(response[1].data[0].isLike == "true");
       setLetter(response[0].data[0]);
     });
   }, []);
 
   const likeHandler = () => {
-    // 좋아요
-    //
+    if (isLike) {
+      // 좋아요 취소
+      Axios.get(`/api/post/like/cancel/${letter.id}`, {
+        headers: {
+          AccessToken: accessToken,
+        },
+      })
+        .then((response) => {
+          if (response.status === 200) setIsLike(false);
+        })
+        .catch((error) => {
+          console.log(error.response.data.message);
+        });
+    } else {
+      Axios.get(`/api/post/like/push/${letter.id}`, {
+        headers: {
+          AccessToken: accessToken,
+        },
+      })
+        .then((response) => {
+          if (response.status === 200) setIsLike(true);
+        })
+        .catch((error) => {
+          console.log(error.response.data.message);
+        });
+    }
   };
   return (
     <div className="container">
@@ -278,12 +301,35 @@ function LetterDetailPage() {
         />
         {isReceived ? (
           <div style={{ margin: "0 auto" }}>
-            <button className="btn-back">뒤로 가기</button>
-            <button className="btn-reply">답장 쓰기</button>
+            <button
+              className="btn-back"
+              type="button"
+              onClick={() => router.back()}
+            >
+              뒤로 가기
+            </button>
+            <button
+              className="btn-reply"
+              type="button"
+              onClick={() =>
+                router.push({
+                  pathname: "/letters/reply",
+                  query: { data: id },
+                })
+              }
+            >
+              답장 쓰기
+            </button>
           </div>
         ) : (
           <div style={{ margin: "0 auto" }}>
-            <button className="btn-back">뒤로 가기</button>
+            <button
+              className="btn-back"
+              type="button"
+              onClick={() => router.back()}
+            >
+              뒤로 가기
+            </button>
           </div>
         )}
       </div>

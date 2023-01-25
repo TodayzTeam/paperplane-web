@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import PostCard from "../PostCard";
+import PostCard from "../letter/PostCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
