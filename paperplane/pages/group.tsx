@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import Image from "next/image";
 import GroupCard from "../components/group/GroupCard";
-import PostCard from "../components/PostCard";
-import Modal from "../components/group/Modal";
+import PostCard from "../components/letter/PostCard";
+import Modal from "../components/group/GroupModal";
 import { useEffect, useState } from "react";
 import Axios from "axios";
 import { useRouter } from "next/router";
@@ -29,6 +29,10 @@ export default function group() {
     // Perform localStorage action
     accessToken = localStorage.getItem("token");
   }
+
+  // useEffect(() => {
+  //   console.log(modalVisible);
+  // }, [modalVisible]);
 
   useEffect(() => {
     // 내가 속한 그룹
@@ -79,6 +83,7 @@ export default function group() {
   const modalClickHandler = (modalNumber: number) => {
     // modalVisible[modalNumber] => true 나머지 => false
     setModalVisible(modalVisible.map((modal, idx) => idx === modalNumber));
+    console.log("clicked");
   };
   // modal close handler
   const modalCloseHandler = () => {
@@ -127,14 +132,19 @@ export default function group() {
       <div className="group-container">
         <nav style={{ width: "920px", display: "flex", alignItems: "center" }}>
           <ul className="group-list">{Groups}</ul>
-          <Image
-            src="/image/group-add.svg"
-            alt={"그룹 추가"}
-            width={41}
-            height={41}
-            // style={{ margin: "85px 19px 120px" }}
+          <button
+            type="button"
+            onClick={() => modalClickHandler(0)}
             style={{ margin: "100px 19px 110px" }}
-          />
+          >
+            <Image
+              src="/image/group-add.svg"
+              alt={"그룹 추가"}
+              width={41}
+              height={41}
+              // style={{ margin: "85px 19px 120px" }}
+            />
+          </button>
         </nav>
         {Groups.length > 0 ? (
           <div className="content-box">
@@ -199,7 +209,7 @@ export default function group() {
                   alignItems: "flex-end",
                   flexDirection: "column",
                   justifyContent: "flex-end",
-                  minWidth: "450px",
+                  minWidth: "490px",
                 }}
               >
                 <div className="search-bar">
@@ -225,7 +235,13 @@ export default function group() {
             />
           </div>
         ) : (
-          <></>
+          <Modal
+            name={selectedGroup[0] && selectedGroup[0].name}
+            code={selectedGroup[0] && selectedGroup[0].code}
+            visible={modalVisible}
+            closeHandler={modalCloseHandler}
+            clickHandler={modalClickHandler}
+          />
         )}
       </div>
       <style jsx>{`

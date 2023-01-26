@@ -1,8 +1,8 @@
 const bgdData = {
-  RED: "#ECE9E2",
-  GREEN: "#E5DCD2",
-  BLUE: "#EEE3D9",
-  BLACK: "#FFFAF3",
+  RED: "#FFFDF9",
+  GREEN: "#FFFAF3",
+  BLUE: "#FAF8F5",
+  BLACK: "#F5EEE4",
 };
 
 export { bgdData };

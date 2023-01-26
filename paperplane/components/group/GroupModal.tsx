@@ -20,6 +20,8 @@ const Modal = ({
   useEffect(() => {
     if (!visible.includes(true)) {
       bgd.current.style = "z-index: -1";
+    } else {
+      bgd.current.style = "z-index: 10";
     }
   }, [visible]);
 
@@ -29,7 +31,6 @@ const Modal = ({
 
   const inputHandler = (e: any, type: string) => {
     const content = e.target.parentElement.children[0].value;
-    // console.log(content);
     if (type === "JOIN") {
       // 초대 코드에 해당하는 그룹 이름 확인하기
       // 틀리면 주황색 글씨로 틀렸다고 알림, 맞으면 groupName 설정

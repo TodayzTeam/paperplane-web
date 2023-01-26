@@ -1,5 +1,5 @@
+import PostCard from "../letter/PostCard";
 import Link from 'next/link';
-import PostCard from '../PostCard';
 
 const LetterList = ({ letters, type }) => {
   return (
