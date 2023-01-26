@@ -14,6 +14,7 @@ export default function Pagination({ page, onPageDown, onPageUp }) {
           display: flex;
           justify-content: flex-end;
           gap: 10px;
+          padding-right: 20px;
           .button {
             width: 36px;
             height: 36px;
