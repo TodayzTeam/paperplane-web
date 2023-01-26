@@ -1,10 +1,10 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { useState, useCallback } from 'react';
-import icon from './icon.png';
-import { useDispatch, useSelector } from 'react-redux';
-import * as loginActions from '../../store/modules/login';
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState, useCallback } from "react";
+import icon from "./icon.png";
+import { useDispatch, useSelector } from "react-redux";
+import * as loginActions from "../../store/modules/login";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -16,12 +16,13 @@ const Header = () => {
 
   const router = useRouter();
   const path = router.pathname;
+  console.log(path);
   const className = (link: string) => {
-    return path == link && 'active';
+    return path == link && "active";
   };
 
-  const text_color =
-    path.substring(0, 10) === '/letterbox' ? '#bababa' : '#fff';
+  const text_color = "var(--color-gray-04)";
+  // path.substring(0, 10) === "/letterbox" ? "var(--color-gray-02)" : "#fff";
 
   return (
     <header>
@@ -36,7 +37,7 @@ const Header = () => {
               <Link href="/group">그룹</Link>
             </div>
           ) : (
-            ''
+            ""
           )}
         </div>
         <div>

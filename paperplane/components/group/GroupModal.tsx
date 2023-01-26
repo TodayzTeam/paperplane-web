@@ -493,6 +493,10 @@ const Modal = ({
           z-index: 11;
           position: fixed;
           display: flex;
+          top: 300px;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
           flex-direction: column;
           align-items: center;
           padding-top: 40px;
