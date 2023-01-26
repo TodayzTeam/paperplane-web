@@ -69,6 +69,8 @@ export default function received() {
           display: flex;
           margin: 80px auto;
           width: 70%;
+          min-width: 1200px;
+          background-color: white;
 
           .inner-box {
             flex-grow: 1;
