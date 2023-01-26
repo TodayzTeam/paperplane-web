@@ -23,8 +23,7 @@ export default function signup() {
   const [selectedInterest, setSelectedInterest] = useState(Array<interest>);
 
   const getAccessToken = () => {
-    const accessToken = router.query.token;
-
+    const accessToken = router.query.token?.toString();
     if (accessToken) {
       localStorage.setItem('token', accessToken);
       setToken(accessToken);

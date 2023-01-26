@@ -11,14 +11,13 @@ export default function login() {
   const dispatch = useDispatch();
 
   const getAccessToken = () => {
-    const accessToken = router.query.token;
+    const accessToken = router.query.token?.toString();
 
     if (accessToken) {
       localStorage.setItem('token', accessToken);
       setToken(accessToken);
       Login();
       router.push('/');
-    } else {
     }
   };
 
