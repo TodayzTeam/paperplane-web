@@ -6,7 +6,6 @@ import PostCard from "../../components/letter/PostCard";
 import SelectModal from "../../components/common/SelectModal";
 import InformModal from "../../components/common/InformModal";
 import { GetServerSideProps } from "next";
-import { getDetailedPost } from "../../components/letterbox/util/api";
 
 type letterType = {
   title: string;
@@ -54,7 +53,7 @@ function LetterDetailPage() {
   const [isReply, setIsReply] = useState<boolean>(false); // 보낸 답장 여부
   const [isReceived, setIsReceived] = useState<boolean>(false); // 받은 편지 여부
   const [isSent, setIsSent] = useState<boolean>(false); // 보낸 편지 여부
-  const [replyCount, setReplyCount] = useState<number>(0); // 온 답장 개수
+  const [replyList, setReplyList] = useState<Array<Object>>([]); // 온 답장 개수
   const [alreadySentReply, setAlreadySentReply] = useState<boolean>(false); // 이미 답장을 보낸 받은 편지인가
   const [originalLetter, setOriginalLetter] = useState<PostType>({
     id: 0,
@@ -101,9 +100,11 @@ function LetterDetailPage() {
       console.log(response[1]);
       console.log(response[2]);
       if (response[0].data[0].sender.id === response[2].data.id) {
-        if (response[0].data.length < 2) {
+        if (!response[1].data[0].isReply) {
           console.log("보낸 편지, 답장이 아님");
           setIsSent(true);
+          if (response[0].data.length > 1)
+            setReplyList(response[0].data.slice(1));
         } else {
           console.log("답장한 편지");
           // if (response[1].data[0].isReply) setOriginalLetter(response[0].data[1]);
@@ -119,13 +120,14 @@ function LetterDetailPage() {
       ) {
         console.log("받은 편지");
         setIsReceived(true);
+        setIsSent(false);
         if (response[0].data.length > 1) setAlreadySentReply(true);
       }
 
       setIsLike(response[1].data[0].isLike);
       setLetter(response[0].data[0]);
     });
-  }, []);
+  }, [id]);
 
   const reportHandler = (type: string) => {
     if (type === "FIRST") {
@@ -260,7 +262,16 @@ function LetterDetailPage() {
                       />
                     </div>
                   </div>
-                  <PostCard data={originalLetter} size={"BIG"} />
+                  <PostCard
+                    data={originalLetter}
+                    size={"BIG"}
+                    clickHandler={() =>
+                      router.push({
+                        pathname: "/letters/detail",
+                        query: { id: originalLetter.id },
+                      })
+                    }
+                  />
                 </div>
                 <div
                   style={{
@@ -272,7 +283,7 @@ function LetterDetailPage() {
               </>
             ) : (
               <>
-                {replyCount > 0 && (
+                {replyList.length > 0 && (
                   <>
                     <div
                       style={{
@@ -294,24 +305,64 @@ function LetterDetailPage() {
                           />
                         </div>
                       </div>
-                      <div className="reply">
-                        <Image
-                          src="/image/letter.png"
-                          alt="답장 온 편지"
-                          width={300}
-                          height={200}
-                          style={{ marginLeft: "45px" }}
-                        />
-                      </div>
-                      <div className="reply">
-                        <Image
-                          className="reply"
-                          src="/image/letter.png"
-                          alt="답장 온 편지"
-                          width={300}
-                          height={200}
-                          style={{ marginLeft: "50px" }}
-                        />
+                      <div className="letter-wrapper">
+                        {replyList.map((reply) => (
+                          <div
+                            className="reply"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/letters/detail",
+                                query: { id: reply.id },
+                              })
+                            }
+                          >
+                            <Image
+                              src="/image/letter.png"
+                              alt="답장 온 편지"
+                              width={300}
+                              height={200}
+                              style={{ marginLeft: "45px" }}
+                            />
+                          </div>
+                        ))}
+                        {replyList.map((reply) => (
+                          <div
+                            className="reply"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/letters/detail",
+                                query: { id: reply.id },
+                              })
+                            }
+                          >
+                            <Image
+                              src="/image/letter.png"
+                              alt="답장 온 편지"
+                              width={300}
+                              height={200}
+                              style={{ marginLeft: "45px" }}
+                            />
+                          </div>
+                        ))}
+                        {replyList.map((reply) => (
+                          <div
+                            className="reply"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/letters/detail",
+                                query: { id: reply.id },
+                              })
+                            }
+                          >
+                            <Image
+                              src="/image/letter.png"
+                              alt="답장 온 편지"
+                              width={300}
+                              height={200}
+                              style={{ marginLeft: "45px" }}
+                            />
+                          </div>
+                        ))}
                       </div>
                     </div>
                     <div
@@ -439,6 +490,12 @@ function LetterDetailPage() {
           display: flex;
           justify-content: center;
         }
+        .letter-wrapper {
+          max-width: 690px;
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+        }
         .reply:hover {
           transform: translate(0, -10px);
         }
@@ -449,7 +506,6 @@ function LetterDetailPage() {
           flex-direction: column;
           margin-left: 13px;
           padding-bottom: 42px;
-          margin-right: 50px;
         }
         .text-box > span {
           width: 100%;
@@ -553,3 +609,8 @@ export default LetterDetailPage;
 //     };
 //   }
 // }
+export async function getServerSideProps(context) {
+  return {
+    props: {},
+  };
+}
