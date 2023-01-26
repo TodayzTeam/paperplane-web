@@ -33,31 +33,32 @@ const LetterList = ({ letters, type }: Props) => {
               {letters.length === 0 && (
                 <img className="notice" src="/image/noletter.png" />
               )}
-              {letters
-                .filter(({ title }: { title: string }) =>
-                  title.includes(keyword)
-                )
-                .map(({ id }) => (
-                  <img
-                    className="letter"
-                    src="/image/letter.png"
-                    onClick={() => {
-                      router.push({
-                        pathname: '/letters/detail',
-                        query: { id },
-                      });
-                    }}
-                  ></img>
-                ))}
+              {letters.map(({ id }) => (
+                <img
+                  className="letter"
+                  src="/image/letter.png"
+                  onClick={() => {
+                    router.push({
+                      pathname: '/letters/detail',
+                      query: { id },
+                    });
+                  }}
+                ></img>
+              ))}
             </>
           ) : (
             <>
               {letters.length === 0 && (
                 <img className="notice" src="/image/noletter.png" />
               )}
-              {letters.map((letter) => (
-                <PostCard data={letter} size="" clickHandler={() => {}} />
-              ))}
+              {letters
+                .filter(
+                  ({ title, content }: { title: string; content: string }) =>
+                    title.includes(keyword) || content.includes(keyword)
+                )
+                .map((letter) => (
+                  <PostCard data={letter} size="" clickHandler={() => {}} />
+                ))}
             </>
           )}
         </div>
@@ -66,6 +67,7 @@ const LetterList = ({ letters, type }: Props) => {
         .letters {
           padding: 20px;
           width: 100%;
+          max-width: 712px;
 
           .search-input__wrapper {
             display: flex;
@@ -98,6 +100,7 @@ const LetterList = ({ letters, type }: Props) => {
             display: grid;
             grid-template-rows: 1fr 1fr;
             grid-template-columns: 1fr 1fr;
+            place-items: center center;
             grid-gap: 15px;
             margin-bottom: 20px;
             min-height: 500px;

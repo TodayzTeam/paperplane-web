@@ -57,6 +57,7 @@ export default function kept() {
           }
           .letterbox {
             padding-left: 160px;
+            max-width: 1060px;
 
             hr {
               color: #bababa;

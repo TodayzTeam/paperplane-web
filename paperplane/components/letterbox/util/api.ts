@@ -3,7 +3,7 @@ import { letter } from './types';
 
 export async function getReceivedPost(page: number) {
   try {
-    const res = await publicApi.get(`/post/received?page=${page}`);
+    const res = await publicApi.get(`/post/received/unread?page=${page}`);
     return res.data;
   } catch (error) {
     console.error(error);
