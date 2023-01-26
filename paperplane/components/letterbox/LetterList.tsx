@@ -1,4 +1,4 @@
-import PostCard from "../PostCard";
+import PostCard from "../letter/PostCard";
 
 const LetterList = ({ letters, type }) => {
   return (

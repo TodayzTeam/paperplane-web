@@ -2,7 +2,7 @@
 import Image from "next/image";
 import GroupCard from "../components/group/GroupCard";
 import PostCard from "../components/letter/PostCard";
-import Modal from "../components/group/Modal";
+import Modal from "../components/group/GroupModal";
 import { useEffect, useState } from "react";
 import Axios from "axios";
 import { useRouter } from "next/router";

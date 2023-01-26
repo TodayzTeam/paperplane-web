@@ -3,6 +3,8 @@ import Axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import PostCard from "../../components/letter/PostCard";
+import SelectModal from "../../components/common/SelectModal";
+import InformModal from "../../components/common/InformModal";
 
 type letterType = {
   title: string;
@@ -59,6 +61,11 @@ function LetterDetailPage() {
     postColor: "",
     likeCount: 0,
   });
+
+  const [modalVisible, setModalVisible] = useState<Array<boolean>>([
+    false,
+    false,
+  ]);
 
   let accessToken: string | null;
 
@@ -122,10 +129,36 @@ function LetterDetailPage() {
     });
   }, []);
 
+  const reportHandler = (type: string) => {
+    if (type === "FIRST") {
+      console.log("리포트 버튼 클릭");
+      setModalVisible([true, false]);
+    } else {
+      Axios.get(`/api/post/report/${id}`, {
+        headers: {
+          AccessToken: accessToken,
+        },
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            setModalVisible([false, true]);
+          }
+        })
+        .catch((error) => {
+          alert(error.response.data.message);
+          router.back();
+        });
+    }
+  };
+
+  const modalCloseHandler = () => {
+    setModalVisible([false, false]);
+  };
+
   const likeHandler = () => {
     if (isLike) {
       // 좋아요 취소
-      Axios.get(`/api/post/like/cancel/${letter.id}`, {
+      Axios.get(`/api/post/like/cancel/${id}`, {
         headers: {
           AccessToken: accessToken,
         },
@@ -137,7 +170,7 @@ function LetterDetailPage() {
           console.log(error.response.data.message);
         });
     } else {
-      Axios.get(`/api/post/like/push/${letter.id}`, {
+      Axios.get(`/api/post/like/push/${id}`, {
         headers: {
           AccessToken: accessToken,
         },
@@ -248,7 +281,13 @@ function LetterDetailPage() {
           <>
             {/* 신고하기 */}
             <div className="report-box">
-              <button className="btn-report">문제 편지 신고하기</button>
+              <button
+                className="btn-report"
+                type="button"
+                onClick={() => reportHandler("FIRST")}
+              >
+                문제 편지 신고하기
+              </button>
             </div>
             {isReply && (
               <>
@@ -332,6 +371,18 @@ function LetterDetailPage() {
             </button>
           </div>
         )}
+        <SelectModal
+          question={"신고하시겠습니까?"}
+          answer={"신고하기"}
+          closeHandler={modalCloseHandler}
+          confirmHandler={reportHandler}
+          visible={modalVisible[0]}
+        />
+        <InformModal
+          sentence={"신고가 완료되었습니다."}
+          clickHandler={() => router.back()}
+          visible={modalVisible[1]}
+        />
       </div>
 
       <style jsx>{`

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Axios from "axios";
-import Preview from "../../components/letter/preview";
+import Preview from "../../components/common/Preview";
 
 const GROUP_DUMMY = [
   {
@@ -120,17 +120,14 @@ export default function reply() {
   };
 
   const submitHandler = () => {
-    // 여기 확인해봐야 함
     const formdata = new FormData();
     const color = colorType[Math.floor(Math.random() * 3)];
     formdata.append("title", title);
     formdata.append("content", content);
     if (recipient !== "") {
-      console.log("그룹");
       formdata.append("receiveGroup", "GROUP");
       formdata.append("groupCode", recipient);
     } else {
-      console.log("랜덤");
       formdata.append("receiveGroup", "RAND");
     }
     formdata.append("color", color);
