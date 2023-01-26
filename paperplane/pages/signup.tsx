@@ -12,6 +12,7 @@ import { MomoizedTagList } from '../components/signup/tag/TagList';
 import { interest } from '../components/signup/types';
 import * as loginActions from '../store/modules/login';
 import NewTag from '../components/signup/tag/NewTag';
+import { setToken } from '../util/api';
 
 export default function signup() {
   const dispatch = useDispatch();
@@ -20,6 +21,20 @@ export default function signup() {
   const [searchedInterest, setSearchedInterest] = useState(Array<interest>);
   const [recommendInterest, setRemmendInterest] = useState(Array<interest>);
   const [selectedInterest, setSelectedInterest] = useState(Array<interest>);
+
+  const getAccessToken = () => {
+    const accessToken = router.query.token;
+
+    if (accessToken) {
+      localStorage.setItem('token', accessToken);
+      setToken(accessToken);
+      Login();
+    }
+  };
+
+  useEffect(() => {
+    getAccessToken();
+  }, [router.query]);
 
   const onToggleSelectedInterest = useCallback(
     (interest: interest) => {
@@ -89,6 +104,7 @@ export default function signup() {
 
   useEffect(() => {
     getRecommend();
+    getAccessToken();
   }, []);
 
   return (
