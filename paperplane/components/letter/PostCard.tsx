@@ -111,7 +111,7 @@ const style = css`
 `;
 const PostCard = (props: cardImpl) => {
   const { data, size } = props;
-  console.log(data);
+  // console.log(data);
   let bgd = Object.keys(data).length > 0 && bgdData[data.postColor];
 
   return (
