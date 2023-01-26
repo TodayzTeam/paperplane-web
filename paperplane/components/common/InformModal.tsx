@@ -66,6 +66,10 @@ const InformModal = (props: informImpl) => {
           flex-direction: column;
           align-items: center;
           padding-top: 40px;
+          top: 300px;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
         }
         .btn {
           width: 100%;

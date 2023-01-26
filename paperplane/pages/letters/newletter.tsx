@@ -120,6 +120,20 @@ export default function Newletter() {
     }
   };
 
+  const searchHandler = (e: any) => {
+    let keyword = e.target.parentElement.children[0].value;
+    if (keyword.length > 0) {
+      Axios.get(`/api/interest/search/${keyword}`).then((response) => {
+        setResult(response.data.map((d) => d.keyword));
+      });
+    } else {
+      Axios.get("/api/interest/recommend").then((response) => {
+        // console.log(response.data.map((d) => d.keyword));
+        setResult(response.data.map((d) => d.keyword));
+      });
+    }
+  };
+
   const submitHandler = () => {
     const formdata = new FormData();
     const color = colorType[Math.floor(Math.random() * 3)];
@@ -256,6 +270,12 @@ export default function Newletter() {
                       className="hash-tag"
                       type="text"
                       placeholder="검색어"
+                    />
+                    <img
+                      src="/image/btn-search.svg"
+                      width={15}
+                      height={15}
+                      onClick={searchHandler}
                     />
                   </div>
                   <div className="result-box">
@@ -511,10 +531,9 @@ export default function Newletter() {
           border-radius: 18px;
           border: 1px solid var(--color-gray-02);
           display: flex;
-          flex-direction: column;
-          justify-content: center;
-          background: #fff url("/image/btn-search.svg") no-repeat 93% 50%/20px
-            26px;
+          align-items: center;
+          justify-content: space-between;
+          padding-right: 20px;
         }
         .result-box {
           display: flex;

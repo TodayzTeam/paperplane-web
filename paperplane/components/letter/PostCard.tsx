@@ -113,7 +113,9 @@ const style = css`
 const PostCard = (props: cardImpl) => {
   const { data, size, clickHandler = "" } = props;
   // console.log(data);
-  let bgd = Object.keys(data).length > 0 && bgdData[data.postColor];
+  let bgd =
+    (data && Object.keys(data).length > 0 && bgdData[data.postColor]) ||
+    "#FFFAF3";
 
   return (
     <Link

@@ -100,7 +100,7 @@ function LetterDetailPage() {
       console.log(response[1]);
       console.log(response[2]);
       if (response[0].data[0].sender.id === response[2].data.id) {
-        if (!response[1].data[0].isReply) {
+        if (response[1].data[0]?.isReply === "NONE") {
           console.log("보낸 편지, 답장이 아님");
           setIsSent(true);
           if (response[0].data.length > 1)
@@ -121,7 +121,13 @@ function LetterDetailPage() {
         console.log("받은 편지");
         setIsReceived(true);
         setIsSent(false);
-        if (response[0].data.length > 1) setAlreadySentReply(true);
+        if (response[0].data.length > 1) {
+          // 상대방이 내게 보낸 답장 편지
+          console.log("상대방이 내게 보낸 답장 편지");
+          setAlreadySentReply(true);
+          setIsReply(true);
+          setOriginalLetter(response[0].data[1]);
+        }
       }
 
       setIsLike(response[1].data[0].isLike);
@@ -262,16 +268,18 @@ function LetterDetailPage() {
                       />
                     </div>
                   </div>
-                  <PostCard
-                    data={originalLetter}
-                    size={"BIG"}
-                    clickHandler={() =>
-                      router.push({
-                        pathname: "/letters/detail",
-                        query: { id: originalLetter.id },
-                      })
-                    }
-                  />
+                  {originalLetter && (
+                    <PostCard
+                      data={originalLetter}
+                      size={"BIG"}
+                      clickHandler={() =>
+                        router.push({
+                          pathname: "/letters/detail",
+                          query: { id: originalLetter.id },
+                        })
+                      }
+                    />
+                  )}
                 </div>
                 <div
                   style={{
@@ -306,8 +314,9 @@ function LetterDetailPage() {
                         </div>
                       </div>
                       <div className="letter-wrapper">
-                        {replyList.map((reply) => (
+                        {replyList.map((reply, idx) => (
                           <div
+                            key={idx}
                             className="reply"
                             onClick={() =>
                               router.push({
@@ -325,8 +334,9 @@ function LetterDetailPage() {
                             />
                           </div>
                         ))}
-                        {replyList.map((reply) => (
+                        {replyList.map((reply, idx) => (
                           <div
+                            key={idx}
                             className="reply"
                             onClick={() =>
                               router.push({
@@ -344,8 +354,9 @@ function LetterDetailPage() {
                             />
                           </div>
                         ))}
-                        {replyList.map((reply) => (
+                        {replyList.map((reply, idx) => (
                           <div
+                            key={idx}
                             className="reply"
                             onClick={() =>
                               router.push({
@@ -378,35 +389,99 @@ function LetterDetailPage() {
             )}
           </>
         )}
-        <div
-          style={{
-            marginTop: "60px",
-          }}
-        />
         {isReceived ? (
-          <div style={{ margin: "0 auto" }}>
-            <button
-              className="btn-back"
-              type="button"
-              onClick={() => router.back()}
-            >
-              뒤로 가기
-            </button>
-            {!alreadySentReply && (
+          <>
+            <div className="report-box">
               <button
-                className="btn-reply"
+                className="btn-report"
                 type="button"
-                onClick={() =>
-                  router.push({
-                    pathname: "/letters/reply",
-                    query: { data: id },
-                  })
-                }
+                onClick={() => reportHandler("FIRST")}
               >
-                답장 쓰기
+                문제 편지 신고하기
               </button>
+            </div>
+            {isReply ? (
+              <>
+                <div
+                  style={{
+                    border: "1px solid var(--color-gray-02)",
+                    margin: "100px -5px 80px",
+                    background: "var(--color-gray-02)",
+                  }}
+                />
+                <div className="reply-wrapper">
+                  <div className="text-box">
+                    <span>원본 편지 확인하기</span>
+                    <p
+                      style={{
+                        fontSize: "18px",
+                        color: "var(--color-gray-03)",
+                        marginBottom: "22px",
+                      }}
+                    >
+                      위 편지는 우측 편지에 대한 답장입니다
+                    </p>
+                    <div className="click-box">
+                      <p>편지 눌러 확인하기</p>
+                      <Image
+                        src={"/image/arrow-right.svg"}
+                        alt="더보기"
+                        width={25}
+                        height={25}
+                      />
+                    </div>
+                  </div>
+                  <PostCard
+                    data={originalLetter}
+                    size={"BIG"}
+                    clickHandler={() =>
+                      router.push({
+                        pathname: "/letters/detail",
+                        query: { id: originalLetter.id },
+                      })
+                    }
+                  />
+                </div>
+                <div
+                  style={{
+                    border: "1px solid var(--color-gray-02)",
+                    margin: "100px -5px 80px",
+                    background: "var(--color-gray-02)",
+                  }}
+                />
+              </>
+            ) : (
+              <div
+                style={{
+                  marginTop: "60px",
+                }}
+              />
             )}
-          </div>
+
+            <div style={{ margin: "0 auto" }}>
+              <button
+                className="btn-back"
+                type="button"
+                onClick={() => router.back()}
+              >
+                뒤로 가기
+              </button>
+              {!alreadySentReply && (
+                <button
+                  className="btn-reply"
+                  type="button"
+                  onClick={() =>
+                    router.push({
+                      pathname: "/letters/reply",
+                      query: { data: id },
+                    })
+                  }
+                >
+                  답장 쓰기
+                </button>
+              )}
+            </div>
+          </>
         ) : (
           <div style={{ margin: "0 auto" }}>
             <button
