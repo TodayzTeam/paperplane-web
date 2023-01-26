@@ -1,16 +1,19 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import Circle from '../letterbox/Circle';
+import { useState } from 'react';
 import LetterList from '../letterbox/LetterList';
 import Textbox from '../letterbox/Textbox';
+import Navigation from './Navigation';
+import Pagination from './Pagination';
 
-export default function Layout() {
-  const router = useRouter();
-  const subPath = router.pathname.substring(11);
+type Props = {
+  letters: {};
+  pageUp: number | (() => void);
+  pageDown: number | (() => void);
+};
 
-  const activeHandler = (path) => {
-    return subPath === path;
-  };
+export default function Layout({ letters, pageUp, pageDown }: Props) {
+  const [readedPosts, setReadedPosts] = useState([]);
+
+  const onHandleReadedPosts = async () => {};
 
   return (
     <>
@@ -20,26 +23,18 @@ export default function Layout() {
           <div className="letterbox">
             <div className="letterbox__inner">
               <Textbox title="새 편지" sub="아직 읽지 않은 편지가 있어요" />
-              <LetterList letters={''} type="new" />
+              <LetterList letters={letters} type="new" />
             </div>
+            <Pagination />
             <hr />
             <div className="letterbox__inner">
               <Textbox title="읽은 편지" sub="지난 편지를 꺼내봐요." />
               <LetterList letters={''} type="read" />
             </div>
+            <Pagination />
           </div>
         </div>
-        <div className="letter-state">
-          <Link href="/letterbox/received">
-            <Circle text="받은 편지" active={activeHandler('received')} />
-          </Link>
-          <Link href="/letterbox/sended">
-            <Circle text="보낸 편지" active={activeHandler('sended')} />
-          </Link>
-          <Link href="/letterbox/kept">
-            <Circle text="수집한 편지" active={activeHandler('kept')} />
-          </Link>
-        </div>
+        <Navigation />
       </div>
       <style jsx>{`
         .letterbox-container {

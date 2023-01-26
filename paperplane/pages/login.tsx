@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import LoginButton from '../components/login/LoginButton';
 import Link from 'next/link';
 import * as loginActions from '../store/modules/login';
+import { setToken } from '../util/api';
 
 export default function login() {
   const router = useRouter();
@@ -11,10 +12,13 @@ export default function login() {
 
   const getAccessToken = () => {
     const accessToken = router.query.token;
+
     if (accessToken) {
       localStorage.setItem('token', accessToken);
+      setToken(accessToken);
       Login();
       router.push('/');
+    } else {
     }
   };
 

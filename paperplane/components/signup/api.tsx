@@ -1,14 +1,23 @@
-import axios from 'axios';
+import { Api, publicApi } from '../../util/api';
 
-export const getUserInterest = async () => {
+// 유저 관심사 목록 등록 api
+export const setUserInterest = async (keywordArr: any[]) => {
+  const formData = new FormData();
+  formData.append('keyword', JSON.stringify(keywordArr));
+
   try {
-    const res = await axios.get('/interest/myinterest', {
-      headers: {
-        'Content-type': 'application/json',
-        Accept: 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-      },
-    });
+    const res = await Api.post('/user/interest', formData);
+    if (res.status === 200) return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// 관심사 키워드 검색
+export const searchInterest = async (keyword: string) => {
+  if (!keyword.length) return [];
+  try {
+    const res = await publicApi.get(`/interest/search/${keyword}`);
     if (res.status === 200) {
       return res.data;
     }
@@ -17,14 +26,10 @@ export const getUserInterest = async () => {
   }
 };
 
-export const getRecommedInterest = async () => {
+// 추천 관심사
+export const getRecommendInterest = async () => {
   try {
-    const res = await axios.get('/interest/recommend', {
-      headers: {
-        'Content-type': 'application/json',
-        Accept: 'application/json',
-      },
-    });
+    const res = await publicApi.get('/interest/recommend');
     if (res.status === 200) {
       return res.data;
     }
