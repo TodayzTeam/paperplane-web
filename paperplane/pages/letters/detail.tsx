@@ -378,35 +378,46 @@ function LetterDetailPage() {
             )}
           </>
         )}
-        <div
-          style={{
-            marginTop: "60px",
-          }}
-        />
         {isReceived ? (
-          <div style={{ margin: "0 auto" }}>
-            <button
-              className="btn-back"
-              type="button"
-              onClick={() => router.back()}
-            >
-              뒤로 가기
-            </button>
-            {!alreadySentReply && (
+          <>
+            <div className="report-box">
               <button
-                className="btn-reply"
+                className="btn-report"
                 type="button"
-                onClick={() =>
-                  router.push({
-                    pathname: "/letters/reply",
-                    query: { data: id },
-                  })
-                }
+                onClick={() => reportHandler("FIRST")}
               >
-                답장 쓰기
+                문제 편지 신고하기
               </button>
-            )}
-          </div>
+            </div>
+            <div
+              style={{
+                marginTop: "60px",
+              }}
+            />
+            <div style={{ margin: "0 auto" }}>
+              <button
+                className="btn-back"
+                type="button"
+                onClick={() => router.back()}
+              >
+                뒤로 가기
+              </button>
+              {!alreadySentReply && (
+                <button
+                  className="btn-reply"
+                  type="button"
+                  onClick={() =>
+                    router.push({
+                      pathname: "/letters/reply",
+                      query: { data: id },
+                    })
+                  }
+                >
+                  답장 쓰기
+                </button>
+              )}
+            </div>
+          </>
         ) : (
           <div style={{ margin: "0 auto" }}>
             <button
