@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import PostCard from "../../components/letter/PostCard";
 import SelectModal from "../../components/common/SelectModal";
 import InformModal from "../../components/common/InformModal";
+import { GetServerSideProps } from "next";
 
 type letterType = {
   title: string;
@@ -52,7 +53,8 @@ function LetterDetailPage() {
   const [isReply, setIsReply] = useState<boolean>(false); // 보낸 답장 여부
   const [isReceived, setIsReceived] = useState<boolean>(false); // 받은 편지 여부
   const [isSent, setIsSent] = useState<boolean>(false); // 보낸 편지 여부
-  const [replyCount, setReplyCount] = useState<number>(0); // 온 답장 개수
+  const [replyList, setReplyList] = useState<Array<Object>>([]); // 온 답장 개수
+  const [alreadySentReply, setAlreadySentReply] = useState<boolean>(false); // 이미 답장을 보낸 받은 편지인가
   const [originalLetter, setOriginalLetter] = useState<PostType>({
     id: 0,
     title: "",
@@ -72,11 +74,6 @@ function LetterDetailPage() {
   if (typeof window !== "undefined") {
     accessToken = localStorage.getItem("token");
   }
-
-  // 받은 편지 / 보낸 편지 / 답장
-  // 받은 편지 : receivers에 본인 있음
-  // 보낸 편지 : sender가 본인
-  // 답장 : ?
 
   useEffect(() => {
     const formData = new FormData();
@@ -99,35 +96,38 @@ function LetterDetailPage() {
         },
       }),
     ]).then((response) => {
-      console.log(response);
-      console.log(response[0].data[0].sender.id);
-      console.log(response[2].data.id);
+      console.log(response[0]);
+      console.log(response[1]);
+      console.log(response[2]);
       if (response[0].data[0].sender.id === response[2].data.id) {
-        // 보낸 편지
-        setIsSent(true);
-        console.log("보낸 편지");
-        // 답장 편지 받아야 함
+        if (!response[1].data[0].isReply) {
+          console.log("보낸 편지, 답장이 아님");
+          setIsSent(true);
+          if (response[0].data.length > 1)
+            setReplyList(response[0].data.slice(1));
+        } else {
+          console.log("답장한 편지");
+          // if (response[1].data[0].isReply) setOriginalLetter(response[0].data[1]);
+          setOriginalLetter(response[0].data[1]);
+          // setIsReply(response[1].data[0].isReply);
+          setIsReply(true);
+          setIsSent(true);
+        }
       } else if (
         response[0].data[0].receivers.some(
           (user: any) => user.id === response[2].data.id
         )
       ) {
-        // 받은 편지
-        setIsReceived(true);
         console.log("받은 편지");
-      } else if (response[1].data[0].isReply) {
-        console.log("답장 편지");
-        // } else if (true) {
-        if (response[1].data[0].isReply) setOriginalLetter(response[0].data[1]);
-        // setOriginalLetter(response[0].data[1]);
-        setIsReply(response[1].data[0].isReply);
-        // setIsReply(true);
+        setIsReceived(true);
+        setIsSent(false);
+        if (response[0].data.length > 1) setAlreadySentReply(true);
       }
 
-      setIsLike(response[1].data[0].isLike == "true");
+      setIsLike(response[1].data[0].isLike);
       setLetter(response[0].data[0]);
     });
-  }, []);
+  }, [id]);
 
   const reportHandler = (type: string) => {
     if (type === "FIRST") {
@@ -220,77 +220,19 @@ function LetterDetailPage() {
             <p>익명의 비행사</p>
           </div>
         </main>
-        {isSent ? (
+        {isSent && (
           <>
-            {replyCount > 0 ? (
+            {isReply ? (
               <>
-                <div
-                  style={{
-                    border: "1px solid var(--color-gray-02)",
-                    margin: "80px -5px 100px",
-                    background: "var(--color-gray-02)",
-                  }}
-                />
-                <div className="reply-wrapper">
-                  <div className="text-box">
-                    <span>답장이 있어요!</span>
-                    <div className="click-box">
-                      <p>편지 눌러 확인하기</p>
-                      <Image
-                        src={"/image/arrow-right.svg"}
-                        alt="더보기"
-                        width={25}
-                        height={25}
-                      />
-                    </div>
-                  </div>
-                  <div className="reply">
-                    <Image
-                      src="/image/letter.png"
-                      alt="답장 온 편지"
-                      width={300}
-                      height={200}
-                      style={{ marginLeft: "45px" }}
-                    />
-                  </div>
-                  <div className="reply">
-                    <Image
-                      className="reply"
-                      src="/image/letter.png"
-                      alt="답장 온 편지"
-                      width={300}
-                      height={200}
-                      style={{ marginLeft: "50px" }}
-                    />
-                  </div>
+                <div className="report-box">
+                  <button
+                    className="btn-report"
+                    type="button"
+                    onClick={() => reportHandler("FIRST")}
+                  >
+                    문제 편지 신고하기
+                  </button>
                 </div>
-                <div
-                  style={{
-                    border: "1px solid var(--color-gray-02)",
-                    margin: "100px -5px 80px",
-                    background: "var(--color-gray-02)",
-                  }}
-                />
-              </>
-            ) : (
-              <></>
-            )}
-          </>
-        ) : (
-          // 보낸 편지가 아니면
-          <>
-            {/* 신고하기 */}
-            <div className="report-box">
-              <button
-                className="btn-report"
-                type="button"
-                onClick={() => reportHandler("FIRST")}
-              >
-                문제 편지 신고하기
-              </button>
-            </div>
-            {isReply && (
-              <>
                 <div
                   style={{
                     border: "1px solid var(--color-gray-02)",
@@ -320,7 +262,16 @@ function LetterDetailPage() {
                       />
                     </div>
                   </div>
-                  <PostCard data={originalLetter} size={"BIG"} />
+                  <PostCard
+                    data={originalLetter}
+                    size={"BIG"}
+                    clickHandler={() =>
+                      router.push({
+                        pathname: "/letters/detail",
+                        query: { id: originalLetter.id },
+                      })
+                    }
+                  />
                 </div>
                 <div
                   style={{
@@ -329,6 +280,100 @@ function LetterDetailPage() {
                     background: "var(--color-gray-02)",
                   }}
                 />
+              </>
+            ) : (
+              <>
+                {replyList.length > 0 && (
+                  <>
+                    <div
+                      style={{
+                        border: "1px solid var(--color-gray-02)",
+                        margin: "80px -5px 100px",
+                        background: "var(--color-gray-02)",
+                      }}
+                    />
+                    <div className="reply-wrapper">
+                      <div className="text-box">
+                        <span>답장이 있어요!</span>
+                        <div className="click-box">
+                          <p>편지 눌러 확인하기</p>
+                          <Image
+                            src={"/image/arrow-right.svg"}
+                            alt="더보기"
+                            width={25}
+                            height={25}
+                          />
+                        </div>
+                      </div>
+                      <div className="letter-wrapper">
+                        {replyList.map((reply) => (
+                          <div
+                            className="reply"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/letters/detail",
+                                query: { id: reply.id },
+                              })
+                            }
+                          >
+                            <Image
+                              src="/image/letter.png"
+                              alt="답장 온 편지"
+                              width={300}
+                              height={200}
+                              style={{ marginLeft: "45px" }}
+                            />
+                          </div>
+                        ))}
+                        {replyList.map((reply) => (
+                          <div
+                            className="reply"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/letters/detail",
+                                query: { id: reply.id },
+                              })
+                            }
+                          >
+                            <Image
+                              src="/image/letter.png"
+                              alt="답장 온 편지"
+                              width={300}
+                              height={200}
+                              style={{ marginLeft: "45px" }}
+                            />
+                          </div>
+                        ))}
+                        {replyList.map((reply) => (
+                          <div
+                            className="reply"
+                            onClick={() =>
+                              router.push({
+                                pathname: "/letters/detail",
+                                query: { id: reply.id },
+                              })
+                            }
+                          >
+                            <Image
+                              src="/image/letter.png"
+                              alt="답장 온 편지"
+                              width={300}
+                              height={200}
+                              style={{ marginLeft: "45px" }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        border: "1px solid var(--color-gray-02)",
+                        margin: "100px -5px 80px",
+                        background: "var(--color-gray-02)",
+                      }}
+                    />
+                  </>
+                )}
               </>
             )}
           </>
@@ -347,18 +392,20 @@ function LetterDetailPage() {
             >
               뒤로 가기
             </button>
-            <button
-              className="btn-reply"
-              type="button"
-              onClick={() =>
-                router.push({
-                  pathname: "/letters/reply",
-                  query: { data: id },
-                })
-              }
-            >
-              답장 쓰기
-            </button>
+            {!alreadySentReply && (
+              <button
+                className="btn-reply"
+                type="button"
+                onClick={() =>
+                  router.push({
+                    pathname: "/letters/reply",
+                    query: { data: id },
+                  })
+                }
+              >
+                답장 쓰기
+              </button>
+            )}
           </div>
         ) : (
           <div style={{ margin: "0 auto" }}>
@@ -443,6 +490,12 @@ function LetterDetailPage() {
           display: flex;
           justify-content: center;
         }
+        .letter-wrapper {
+          max-width: 690px;
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+        }
         .reply:hover {
           transform: translate(0, -10px);
         }
@@ -453,7 +506,6 @@ function LetterDetailPage() {
           flex-direction: column;
           margin-left: 13px;
           padding-bottom: 42px;
-          margin-right: 50px;
         }
         .text-box > span {
           width: 100%;
@@ -522,23 +574,43 @@ function LetterDetailPage() {
   );
 }
 
-// export async function getStaticPaths() {
-//   return {
-//     paths: [{ params: { id: "1" } }],
-//     fallback: false,
-//   };
-// }
-// export async function getStaticProps(context) {
-//   // const id = context.params.id;
-//   let letter = {};
-//   const res = await Axios.get(`/post/info/1`);
-
-//   return { letter: res };
-// }
-
-// export async function getServerSideProps() {
-//   const res = await Axios.get(`/post/info/1`);
-//   return { props: { res } };
-// }
-
 export default LetterDetailPage;
+// export async function getServerSideProps(context: any) {
+//   console.log(context.query);
+//   // const formData = new FormData();
+//   // formData.append("postIdList", String(context.query.id));
+//   try {
+//     const res = await Axios.all([
+//       Axios.get(`/api/post/info/${context.query.id}`, {
+//         headers: {
+//           AccessToken: context.query.accessToken,
+//         },
+//       }),
+//       // Axios.post("/post/option", formData, {
+//       //   headers: {
+//       //     AccessToken: context.query.accessToken,
+//       //   },
+//       // }),
+//       Axios.post("/user/simple", {
+//         headers: {
+//           AccessToken: context.query.accessToken,
+//         },
+//       }),
+//     ]);
+//     // const response = await getDetailedPost(context.query.id);
+//     console.log(response);
+//     return {
+//       props: {},
+//     };
+//   } catch (err) {
+//     console.log(err);
+//     return {
+//       props: {},
+//     };
+//   }
+// }
+export async function getServerSideProps(context) {
+  return {
+    props: {},
+  };
+}

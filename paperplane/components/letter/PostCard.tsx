@@ -6,6 +6,7 @@ import Link from "next/link";
 interface cardImpl {
   data: PostType;
   size: string;
+  clickHandler: any | null;
 }
 
 type PostType = {
@@ -110,16 +111,17 @@ const style = css`
   }
 `;
 const PostCard = (props: cardImpl) => {
-  const { data, size } = props;
-  console.log(data);
+  const { data, size, clickHandler = "" } = props;
+  // console.log(data);
   let bgd = Object.keys(data).length > 0 && bgdData[data.postColor];
 
   return (
     <Link
       href={{
-        pathname: `/letters/${data.id}`,
-        query: { background: bgd },
+        pathname: `/letters/detail`,
+        query: { id: data.id, background: bgd },
       }}
+      onClick={clickHandler}
     >
       {size === "BIG" ? (
         <div className="container big" style={{ background: data ? bgd : "" }}>
