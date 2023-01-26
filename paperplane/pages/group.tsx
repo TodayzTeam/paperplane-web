@@ -95,6 +95,29 @@ export default function group() {
     setSelectedGroup(groupList.filter((group) => group.id === tag.id));
   };
 
+  const searchHandler = (e: any) => {
+    let keyword = e.target.parentElement.children[0].value;
+    if (keyword.length > 0) {
+      Axios.get(`/api/post/search/${selectedGroup[0].id}/${keyword}?page=0`, {
+        headers: {
+          AccessToken: accessToken,
+        },
+      }).then((response) => {
+        console.log(response.data);
+        setGroupLetter(response.data);
+      });
+    } else {
+      Axios.get(`/api/post/list/${selectedGroup[0].id}`, {
+        headers: {
+          AccessToken: accessToken,
+        },
+      }).then((response) => {
+        console.log(response.data);
+        setGroupLetter(response.data);
+      });
+    }
+  };
+
   const Groups = groupList.map((group, idx) => {
     return (
       <li
@@ -212,13 +235,17 @@ export default function group() {
                   minWidth: "490px",
                 }}
               >
-                <div className="search-bar">
-                  검색어
-                  <Image
-                    src="/image/search.svg"
-                    alt=""
-                    width={24}
-                    height={24}
+                <div className="search-box">
+                  <input
+                    className="hash-tag"
+                    type="text"
+                    placeholder="검색어"
+                  />
+                  <img
+                    src="/image/btn-search.svg"
+                    width={15}
+                    height={15}
+                    onClick={searchHandler}
                   />
                 </div>
                 {groupLetter?.map((letter, idx) => {
@@ -248,6 +275,7 @@ export default function group() {
         .container {
           background-image: url("/image/background-group.png");
           color: black;
+          min-height: 2000px;
         }
         .title {
           font-size: 52px;
@@ -328,17 +356,22 @@ export default function group() {
         .member-list > li:nth-child(3n) {
           margin-right: 0;
         }
-        .search-bar {
-          width: 250px;
+        .search-box {
           height: 36px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          border: 1px solid var(--color-gray-02);
           border-radius: 18px;
-          padding: 6px 14px 6px 25px;
-          margin-right: 20px;
-          margin-bottom: 50px;
+          border: 1px solid var(--color-gray-02);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-right: 20px;
+          margin-bottom: 30px;
+        }
+        .hash-tag {
+          background: transparent;
+          border: none;
+          height: 18px;
+          margin-left: 25px;
+          color: var(--color-gray-04);
         }
       `}</style>
     </div>

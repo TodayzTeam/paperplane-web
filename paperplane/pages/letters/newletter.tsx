@@ -120,8 +120,18 @@ export default function Newletter() {
     }
   };
 
-  const searchHandler = () => {
-    // Axios.get(`/api/interest/search/${}`)
+  const searchHandler = (e: any) => {
+    let keyword = e.target.parentElement.children[0].value;
+    if (keyword.length > 0) {
+      Axios.get(`/api/interest/search/${keyword}`).then((response) => {
+        setResult(response.data.map((d) => d.keyword));
+      });
+    } else {
+      Axios.get("/api/interest/recommend").then((response) => {
+        // console.log(response.data.map((d) => d.keyword));
+        setResult(response.data.map((d) => d.keyword));
+      });
+    }
   };
 
   const submitHandler = () => {

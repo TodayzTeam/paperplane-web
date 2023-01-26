@@ -306,8 +306,9 @@ function LetterDetailPage() {
                         </div>
                       </div>
                       <div className="letter-wrapper">
-                        {replyList.map((reply) => (
+                        {replyList.map((reply, idx) => (
                           <div
+                            key={idx}
                             className="reply"
                             onClick={() =>
                               router.push({
@@ -325,8 +326,9 @@ function LetterDetailPage() {
                             />
                           </div>
                         ))}
-                        {replyList.map((reply) => (
+                        {replyList.map((reply, idx) => (
                           <div
+                            key={idx}
                             className="reply"
                             onClick={() =>
                               router.push({
@@ -344,8 +346,9 @@ function LetterDetailPage() {
                             />
                           </div>
                         ))}
-                        {replyList.map((reply) => (
+                        {replyList.map((reply, idx) => (
                           <div
+                            key={idx}
                             className="reply"
                             onClick={() =>
                               router.push({
