@@ -68,7 +68,7 @@ export default function sent() {
           display: flex;
           margin: 80px auto;
           width: 70%;
-
+          min-width: 1200px;
           .inner-box {
             flex-grow: 1;
           }

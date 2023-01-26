@@ -27,7 +27,7 @@ export default function kept() {
           <div className="title">편지함______</div>
           <div className="letterbox">
             <div className="letterbox__inner">
-              <Textbox title="받은 편지" sub="수집한 편지에요" />
+              <Textbox title="수집한 편지" sub="" />
               <LetterList letters={letters} type="read" />
             </div>
             <Pagination
@@ -44,6 +44,7 @@ export default function kept() {
           display: flex;
           margin: 80px auto;
           width: 70%;
+          min-width: 1200px;
 
           .inner-box {
             flex-grow: 1;

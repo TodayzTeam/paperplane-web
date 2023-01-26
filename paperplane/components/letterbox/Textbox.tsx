@@ -8,7 +8,7 @@ const Textbox = ({ title, sub }) => {
       <style jsx>{`
         .text {
           width: 20%;
-          padding-top: 40px;
+          padding-top: 100px;
           &--bold {
             font-weight: 700;
             font-size: 28px;
