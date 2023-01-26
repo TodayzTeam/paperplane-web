@@ -11,6 +11,7 @@ const Header = () => {
   const isLogin = useSelector(({ value }) => value);
 
   const logout = useCallback(() => {
+    localStorage.removeItem('token');
     dispatch(loginActions.logout());
   }, [dispatch]);
 

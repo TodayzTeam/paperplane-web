@@ -10,8 +10,10 @@ const Layout = (props: any) => {
   useEffect(() => {
     if (router.pathname === '/login' || router.pathname === '/signup') {
       setShowFooter(false);
+    } else {
+      setShowFooter(true);
     }
-  }, [router]);
+  }, [router.pathname]);
 
   return (
     <>

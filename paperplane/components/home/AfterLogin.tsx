@@ -1,12 +1,19 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import Carousel from '../home/Carousel';
 import Button from './Button';
+import useScrollFadeIn from './hooks/useScrollFadeIn';
 
 const AfterLogin = () => {
+  const animatedItem1 = useScrollFadeIn('up', 1, 0);
+  const animatedItem2 = useScrollFadeIn('up', 1, 0);
+  const animatedItem3 = useScrollFadeIn('up', 1, 0);
+  const router = useRouter();
+
   return (
     <>
       <div className="container">
-        <div className="title">
+        <div className="title" {...animatedItem1}>
           <Image
             src={'/image/letterbox.png'}
             alt={'우편함'}
@@ -17,14 +24,20 @@ const AfterLogin = () => {
           <div className="title-text">
             <div className="title1">당신을 위한 종이비행기</div>
             <div className="title2">편지로 마음을 전해보세요</div>
-            <Button color="#6B85A4" text="편지 쓰기" onClick={() => {}} />
+            <Button
+              color="#6B85A4"
+              text="편지 쓰기"
+              onClick={() => {
+                router.push('/letters/newletter');
+              }}
+            />
           </div>
         </div>
-        <div className="sub">
+        <div className="sub" {...animatedItem2}>
           편지로 마음을 전해보세요
           <Image src="/image/arrow.svg" alt={''} width={50} height={50} />
         </div>
-        <div className="list">
+        <div className="list" {...animatedItem3}>
           <div className="list-title">
             많은 공감을 얻은
             <br />이 달의 편지
