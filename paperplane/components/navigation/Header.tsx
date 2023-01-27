@@ -11,13 +11,12 @@ const Header = () => {
   const isLogin = useSelector(({ value }) => value);
 
   const logout = useCallback(() => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     dispatch(loginActions.logout());
   }, [dispatch]);
 
   const router = useRouter();
   const path = router.pathname;
-  console.log(path);
   const className = (link: string) => {
     return path == link && "active";
   };

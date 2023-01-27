@@ -2,6 +2,7 @@ import css from "styled-jsx/css";
 import Image from "next/image";
 import { bgdData } from "../../json/background";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface cardImpl {
   data: PostType;
@@ -111,19 +112,24 @@ const style = css`
   }
 `;
 const PostCard = (props: cardImpl) => {
-  const { data, size, clickHandler = "" } = props;
+  const { data, size, clickHandler = null } = props;
+  const router = useRouter();
   // console.log(data);
   let bgd =
     (data && Object.keys(data).length > 0 && bgdData[data.postColor]) ||
     "#FFFAF3";
 
   return (
-    <Link
-      href={{
-        pathname: `/letters/detail`,
-        query: { id: data.id, background: bgd },
-      }}
-      onClick={clickHandler}
+    <div
+      onClick={
+        clickHandler
+          ? clickHandler
+          : () =>
+              router.push({
+                pathname: "/letters/detail",
+                query: { id: data.id, background: bgd },
+              })
+      }
     >
       {size === "BIG" ? (
         <div className="container big" style={{ background: data ? bgd : "" }}>
@@ -176,7 +182,7 @@ const PostCard = (props: cardImpl) => {
       )}
 
       <style jsx>{style}</style>
-    </Link>
+    </div>
   );
 };
 

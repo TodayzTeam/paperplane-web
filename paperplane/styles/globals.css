@@ -35,8 +35,9 @@ a {
   }
 }
 .swiper-container {
-  width: 90vw !important;
-  height: 500px !important;
+  width: 80vw !important;
+  height: 700px !important;
+  /* overflow: visible !important; */
 }
 
 .swiper-slide > article {
@@ -47,11 +48,6 @@ a {
 }
 .swiper-slide-active > article {
   opacity: 1 !important;
-}
-.swiper-container {
-  position: relative;
-  width: 90vw;
-  height: 300px;
 }
 
 .swiper-slide {

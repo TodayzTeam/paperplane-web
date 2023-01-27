@@ -95,11 +95,17 @@ export default function Newletter() {
     btn.innerText = groupName;
     btn.parentElement.classList.remove("active");
     // groupCode : 전체(''), 나머지 고유 groupId 값
-    if (groupCode !== "")
+    if (groupCode !== "") {
       setInputs({
         ...inputs,
         ["recipient"]: groupCode,
       });
+    } else {
+      setInputs({
+        ...inputs,
+        ["recipient"]: "",
+      });
+    }
   };
 
   const hashtagHandler = (e: any, method: string) => {
@@ -585,7 +591,9 @@ export default function Newletter() {
         }
         .submit-container > button {
           background: var(--color-primary-dark);
+          color: white;
           width: 100px;
+          font-weight: 700;
           height: 48px;
           text-align: center;
           outline: 0;

@@ -1,7 +1,7 @@
-import PostCard from '../letter/PostCard';
-import Link from 'next/link';
-import { ChangeEvent, useState } from 'react';
-import { useRouter } from 'next/router';
+import PostCard from "../letter/PostCard";
+import Link from "next/link";
+import { ChangeEvent, useState } from "react";
+import { useRouter } from "next/router";
 
 type Props = {
   letters: [];
@@ -10,7 +10,7 @@ type Props = {
 
 const LetterList = ({ letters, type }: Props) => {
   const router = useRouter();
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useState("");
   const onChangeHandler = (e: ChangeEvent) => {
     setKeyword(e.target.value);
   };
@@ -28,18 +28,18 @@ const LetterList = ({ letters, type }: Props) => {
           </div>
         </div>
         <div className="letters__inner">
-          {type === 'new' ? (
+          {type === "new" ? (
             <>
-              {letters.length === 0 && (
+              {letters?.length === 0 && (
                 <img className="notice" src="/image/noletter.png" />
               )}
-              {letters.map(({ id }) => (
+              {letters?.map(({ id }) => (
                 <img
                   className="letter"
                   src="/image/letter.png"
                   onClick={() => {
                     router.push({
-                      pathname: '/letters/detail',
+                      pathname: "/letters/detail",
                       query: { id },
                     });
                   }}
@@ -48,16 +48,16 @@ const LetterList = ({ letters, type }: Props) => {
             </>
           ) : (
             <>
-              {letters.length === 0 && (
+              {letters?.length === 0 && (
                 <img className="notice" src="/image/noletter.png" />
               )}
               {letters
-                .filter(
+                ?.filter(
                   ({ title, content }: { title: string; content: string }) =>
                     title.includes(keyword) || content.includes(keyword)
                 )
                 .map((letter) => (
-                  <PostCard data={letter} size="" clickHandler={() => {}} />
+                  <PostCard data={letter} size="" clickHandler={null} />
                 ))}
             </>
           )}
@@ -81,7 +81,7 @@ const LetterList = ({ letters, type }: Props) => {
               display: flex;
               flex-direction: column;
               justify-content: center;
-              background: #fff url('/image/btn-search.svg') no-repeat 93% 50%/20px
+              background: #fff url("/image/btn-search.svg") no-repeat 93% 50%/20px
                 26px;
 
               input {
