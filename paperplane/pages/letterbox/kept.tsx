@@ -1,11 +1,11 @@
-import { getLikedPost } from '../../components/letterbox/util/api';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import usePage from '../../components/letterbox/hooks/usePage';
-import Textbox from '../../components/letterbox/Textbox';
-import LetterList from '../../components/letterbox/LetterList';
-import Pagination from '../../components/letterbox/Pagination';
-import Navigation from '../../components/letterbox/Navigation';
+import { getLikedPost } from "../../components/letterbox/util/api";
+import { useState } from "react";
+import { useEffect } from "react";
+import usePage from "../../components/letterbox/hooks/usePage";
+import Textbox from "../../components/letterbox/Textbox";
+import LetterList from "../../components/letterbox/LetterList";
+import Pagination from "../../components/letterbox/Pagination";
+import Navigation from "../../components/letterbox/Navigation";
 
 export default function kept() {
   const page = usePage(0);
@@ -48,6 +48,7 @@ export default function kept() {
 
           .inner-box {
             flex-grow: 1;
+            margin-bottom: 100px;
           }
 
           .title {

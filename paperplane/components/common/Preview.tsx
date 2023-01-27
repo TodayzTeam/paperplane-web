@@ -3,9 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import Axios from "axios";
 
 interface letterImpl {
-  letter: letterType;
+  letter: letterType | simpleLetterType;
   visible: any;
   closeHandler: any;
+  margin: number;
 }
 
 type letterType = {
@@ -16,10 +17,18 @@ type letterType = {
   isLike: boolean;
 };
 
+type simpleLetterType = {
+  id: string;
+  title: string;
+  content: string;
+  date: Date;
+  likeCount: number;
+};
+
 const Preview = (props: letterImpl) => {
-  const { letter, visible, closeHandler } = props;
+  const { letter, visible, closeHandler, margin } = props;
   const bgd = useRef<HTMLDivElement>(null);
-  const [isLike, setIsLike] = useState<boolean>(letter.isLike);
+  const [isLike, setIsLike] = useState<boolean>(letter?.isLike || false);
   let accessToken: string | null;
 
   if (typeof window !== "undefined") {
@@ -28,38 +37,40 @@ const Preview = (props: letterImpl) => {
 
   useEffect(() => {
     if (visible) {
-      bgd.current.style = "z-index: 10";
+      bgd.current.style = "z-index: 10; opacity: 1";
     } else {
-      bgd.current.style = "z-index: -1";
+      bgd.current.style = "z-index: -1; opacity: 0";
     }
   }, [visible]);
 
   const likeHandler = () => {
-    if (isLike) {
-      // 좋아요 취소
-      Axios.get(`/api/post/like/cancel/${letter.id}`, {
-        headers: {
-          AccessToken: accessToken,
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) setIsLike(false);
+    if (!letter.likeCount) {
+      if (isLike) {
+        // 좋아요 취소
+        Axios.get(`/api/post/like/cancel/${letter.id}`, {
+          headers: {
+            AccessToken: accessToken,
+          },
         })
-        .catch((error) => {
-          console.log(error.response.data.message);
-        });
-    } else {
-      Axios.get(`/api/post/like/push/${letter.id}`, {
-        headers: {
-          AccessToken: accessToken,
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) setIsLike(true);
+          .then((response) => {
+            if (response.status === 200) setIsLike(false);
+          })
+          .catch((error) => {
+            console.log(error.response.data.message);
+          });
+      } else {
+        Axios.get(`/api/post/like/push/${letter.id}`, {
+          headers: {
+            AccessToken: accessToken,
+          },
         })
-        .catch((error) => {
-          console.log(error.response.data.message);
-        });
+          .then((response) => {
+            if (response.status === 200) setIsLike(true);
+          })
+          .catch((error) => {
+            console.log(error.response.data.message);
+          });
+      }
     }
   };
 
@@ -107,17 +118,17 @@ const Preview = (props: letterImpl) => {
           background: #fffdf9;
           box-shadow: 1px 3px 3px 1px rgba(0, 0, 0, 0.1);
           border-radius: 10px;
-          position: fixed;
+          position: absolute;
           padding: 70px;
-          top: 300px;
+          top: ${margin}px;
           left: 0;
           right: 0;
           margin: 0 auto;
           z-index: 11;
         }
         .btn-exit {
-          position: fixed;
-          top: 280px;
+          position: absolute;
+          top: -20px;
           left: 0;
           right: -490px;
           margin: 0 auto;

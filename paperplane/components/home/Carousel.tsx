@@ -4,10 +4,27 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import Axios from "axios";
+import Preview from "../common/Preview";
+
+type simpleLetterType = {
+  id: string;
+  title: string;
+  content: string;
+  date: Date;
+  likeCount: number;
+};
 
 const Carousel = () => {
   const [domLoaded, setDomLoaded] = useState(false);
   const [letters, setLetters] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [letter, setLetter] = useState<simpleLetterType>({
+    id: "",
+    title: "",
+    content: "",
+    date: new Date(),
+    likeCount: 0,
+  });
 
   const prevRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLDivElement>(null);
@@ -19,6 +36,10 @@ const Carousel = () => {
       setLetters(response.data);
     });
   }, []);
+
+  const modalCloseHandler = () => {
+    setModalVisible(false);
+  };
 
   return (
     <>
@@ -44,14 +65,25 @@ const Carousel = () => {
             // }}
           >
             <div className="swiper-wrapper">
-              {letters?.map((letter) => (
-                <SwiperSlide className="swiper-slide">
-                  <PostCard data={letter} size={"SMALL"} />
+              {letters?.map((letter, idx) => (
+                <SwiperSlide key={idx} className="swiper-slide">
+                  <PostCard
+                    data={letter}
+                    size={"SMALL"}
+                    clickHandler={() => {
+                      setLetter(letter);
+                      setModalVisible(true);
+                    }}
+                  />
                 </SwiperSlide>
               ))}
             </div>
-            {/* <div className="swiper-button-prev" ref={prevRef}></div>
-            <div className="swiper-button-next" ref={nextRef}></div> */}
+            <Preview
+              margin={20}
+              letter={letter}
+              visible={modalVisible}
+              closeHandler={modalCloseHandler}
+            />
             <style jsx>{`
               .swiper-container {
                 position: relative;

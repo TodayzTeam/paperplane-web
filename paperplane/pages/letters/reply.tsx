@@ -93,10 +93,6 @@ export default function reply() {
     });
   }, []);
 
-  useEffect(() => {
-    console.log(originalLetter);
-  }, [originalLetter]);
-
   const inputHandler = (e: any) => {
     const { value, name } = e.target;
     setInputs({
@@ -206,6 +202,7 @@ export default function reply() {
           </section>
         </main>
         <Preview
+          margin={200}
           letter={originalLetter}
           visible={visible}
           closeHandler={modalCloseHandler}
@@ -474,6 +471,8 @@ export default function reply() {
         }
         .submit-container > button {
           background: var(--color-primary-dark);
+          color: white;
+          font-weight: 700;
           width: 100px;
           height: 48px;
           text-align: center;

@@ -13,7 +13,6 @@ const SelectModal = (props: selectImpl) => {
   const bgd = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log(visible);
     if (visible) {
       bgd.current.style = "z-index: 10";
     } else {

@@ -30,10 +30,6 @@ export default function group() {
     accessToken = localStorage.getItem("token");
   }
 
-  // useEffect(() => {
-  //   console.log(modalVisible);
-  // }, [modalVisible]);
-
   useEffect(() => {
     // 내가 속한 그룹
     Axios.get("/api/group/mygroup", {
@@ -42,7 +38,6 @@ export default function group() {
       },
     })
       .then((response) => {
-        console.log(response.data);
         setGroupList(response.data);
         setSelectedGroup({ 0: response.data[0] });
       })
@@ -56,24 +51,15 @@ export default function group() {
 
   useEffect(() => {
     if (selectedGroup[0] && selectedGroup[0].id) {
-      // 그룹 상세 정보
-      Axios.get(`/api/group/search/${selectedGroup[0].code}`)
-        .then((response) => {
-          console.log(response.data);
-          // setGroupDetail(response.data);
-        })
-        .catch((error) => alert(error.response.data.message));
       // 그룹원 목록
       Axios.get(`/api/group/users/${selectedGroup[0].id}`).then((response) => {
         setGroupUser(response.data);
-        // console.log(response.data);
       });
       Axios.get(`/api/post/list/${selectedGroup[0].id}`, {
         headers: {
           AccessToken: accessToken,
         },
       }).then((response) => {
-        console.log(response.data);
         setGroupLetter(response.data);
       });
     }
@@ -83,7 +69,6 @@ export default function group() {
   const modalClickHandler = (modalNumber: number) => {
     // modalVisible[modalNumber] => true 나머지 => false
     setModalVisible(modalVisible.map((modal, idx) => idx === modalNumber));
-    console.log("clicked");
   };
   // modal close handler
   const modalCloseHandler = () => {
@@ -91,7 +76,6 @@ export default function group() {
   };
 
   const groupHandler = (tag: Object) => {
-    console.log("selectedGroup : " + tag.name);
     setSelectedGroup(groupList.filter((group) => group.id === tag.id));
   };
 
@@ -103,7 +87,6 @@ export default function group() {
           AccessToken: accessToken,
         },
       }).then((response) => {
-        console.log(response.data);
         setGroupLetter(response.data);
       });
     } else {
@@ -112,7 +95,6 @@ export default function group() {
           AccessToken: accessToken,
         },
       }).then((response) => {
-        console.log(response.data);
         setGroupLetter(response.data);
       });
     }
@@ -249,7 +231,14 @@ export default function group() {
                   />
                 </div>
                 {groupLetter?.map((letter, idx) => {
-                  return <PostCard key={idx} data={letter} size={"BIG"} />;
+                  return (
+                    <PostCard
+                      key={idx}
+                      data={letter}
+                      size={"BIG"}
+                      clickHandler={null}
+                    />
+                  );
                 })}
               </div>
             </main>

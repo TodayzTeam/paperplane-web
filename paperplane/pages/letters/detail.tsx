@@ -96,40 +96,40 @@ function LetterDetailPage() {
         },
       }),
     ]).then((response) => {
-      console.log(response[0]);
-      console.log(response[1]);
-      console.log(response[2]);
+      // console.log(response[0]);
+      // console.log(response[1]);
+      // console.log(response[2]);
       if (response[0].data[0].sender.id === response[2].data.id) {
-        if (response[1].data[0]?.isReply === "NONE") {
-          console.log("보낸 편지, 답장이 아님");
-          setIsSent(true);
+        setIsSent(true);
+        setIsReceived(false);
+        if (!response[1].data[0]?.sentReply) {
+          // 보낸 편지, 답장 편지 아님
+          // console.log("보낸 편지, 답장이 아님");
+          setIsReply(false);
           if (response[0].data.length > 1)
             setReplyList(response[0].data.slice(1));
         } else {
-          console.log("답장한 편지");
-          // if (response[1].data[0].isReply) setOriginalLetter(response[0].data[1]);
+          // console.log("답장한 편지");
           setOriginalLetter(response[0].data[1]);
-          // setIsReply(response[1].data[0].isReply);
           setIsReply(true);
-          setIsSent(true);
         }
       } else if (
         response[0].data[0].receivers.some(
           (user: any) => user.id === response[2].data.id
         )
       ) {
-        console.log("받은 편지");
-        setIsReceived(true);
         setIsSent(false);
-        if (response[0].data.length > 1) {
-          // 상대방이 내게 보낸 답장 편지
-          console.log("상대방이 내게 보낸 답장 편지");
+        setIsReceived(true);
+        if (!response[1].data[0]?.receivedReply) {
+          // console.log("받은 편지, 받은 답장 아님");
+          setIsReply(false);
+        } else {
+          // console.log("상대방이 내게 보낸 답장 편지");
           setAlreadySentReply(true);
           setIsReply(true);
           setOriginalLetter(response[0].data[1]);
         }
       }
-
       setIsLike(response[1].data[0].isLike);
       setLetter(response[0].data[0]);
     });
@@ -137,7 +137,6 @@ function LetterDetailPage() {
 
   const reportHandler = (type: string) => {
     if (type === "FIRST") {
-      console.log("리포트 버튼 클릭");
       setModalVisible([true, false]);
     } else {
       Axios.get(`/api/post/report/${id}`, {
@@ -291,6 +290,11 @@ function LetterDetailPage() {
               </>
             ) : (
               <>
+                <div
+                  style={{
+                    marginTop: "60px",
+                  }}
+                />
                 {replyList.length > 0 && (
                   <>
                     <div
@@ -314,46 +318,6 @@ function LetterDetailPage() {
                         </div>
                       </div>
                       <div className="letter-wrapper">
-                        {replyList.map((reply, idx) => (
-                          <div
-                            key={idx}
-                            className="reply"
-                            onClick={() =>
-                              router.push({
-                                pathname: "/letters/detail",
-                                query: { id: reply.id },
-                              })
-                            }
-                          >
-                            <Image
-                              src="/image/letter.png"
-                              alt="답장 온 편지"
-                              width={300}
-                              height={200}
-                              style={{ marginLeft: "45px" }}
-                            />
-                          </div>
-                        ))}
-                        {replyList.map((reply, idx) => (
-                          <div
-                            key={idx}
-                            className="reply"
-                            onClick={() =>
-                              router.push({
-                                pathname: "/letters/detail",
-                                query: { id: reply.id },
-                              })
-                            }
-                          >
-                            <Image
-                              src="/image/letter.png"
-                              alt="답장 온 편지"
-                              width={300}
-                              height={200}
-                              style={{ marginLeft: "45px" }}
-                            />
-                          </div>
-                        ))}
                         {replyList.map((reply, idx) => (
                           <div
                             key={idx}
@@ -614,6 +578,7 @@ function LetterDetailPage() {
         }
         .btn-back {
           background: var(--color-primary-deep);
+          color: #fff;
           border-radius: 35px;
           padding: 25px 40px;
           font-weight: 700;

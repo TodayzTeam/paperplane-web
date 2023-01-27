@@ -1,13 +1,13 @@
-import Image from 'next/image';
-import { useRouter } from 'next/router';
-import Carousel from '../home/Carousel';
-import Button from './Button';
-import useScrollFadeIn from './hooks/useScrollFadeIn';
+import Image from "next/image";
+import { useRouter } from "next/router";
+import Carousel from "../home/Carousel";
+import Button from "./Button";
+import useScrollFadeIn from "./hooks/useScrollFadeIn";
 const BeforeLogin = () => {
-  const animatedItem1 = useScrollFadeIn('up', 1, 0);
-  const animatedItem2 = useScrollFadeIn('up', 1, 0);
-  const animatedItem3 = useScrollFadeIn('up', 1, 0);
-  const animatedItem4 = useScrollFadeIn('up', 1, 0);
+  const animatedItem1 = useScrollFadeIn("up", 1, 0);
+  const animatedItem2 = useScrollFadeIn("up", 1, 0);
+  const animatedItem3 = useScrollFadeIn("up", 1, 0);
+  const animatedItem4 = useScrollFadeIn("up", 1, 0);
   const router = useRouter();
   return (
     <>
@@ -18,12 +18,13 @@ const BeforeLogin = () => {
         </div>
         <div className="sub" {...animatedItem2}>
           편지로 마음을 전해보세요
-          <Image src="/image/arrow.svg" alt={''} width={50} height={50} />
+          <Image src="/image/arrow.svg" alt={""} width={50} height={50} />
         </div>
         <div className="list" {...animatedItem3}>
           <div className="list-title">
             많은 공감을 얻은
-            <br />이 달의 편지
+            <br />
+            <p style={{ fontSize: "46px", margin: 0 }}>이 달의 편지</p>
           </div>
         </div>
         <div className="carousel">
@@ -40,14 +41,14 @@ const BeforeLogin = () => {
               color="#6B85A4"
               text="회원가입"
               onClick={() => {
-                router.push('/login');
+                router.push("/login");
               }}
             />
             <Button
               color="white"
               text="로그인"
               onClick={() => {
-                router.push('/login');
+                router.push("/login");
               }}
             />
           </div>
@@ -60,11 +61,12 @@ const BeforeLogin = () => {
           box-sizing: border-box;
           width: 100%;
           padding: 7%;
-          gap: 300px;
         }
         .title {
           text-align: center;
           font-weight: 700;
+          margin-bottom: 300px;
+          margin-top: 150px;
         }
         .title1 {
           font-size: 46px;
@@ -84,6 +86,7 @@ const BeforeLogin = () => {
           opacity: 80%;
           font-size: 22px;
           gap: 20px;
+          margin-bottom: 330px;
         }
         .list {
           margin-left: 20px;
@@ -112,6 +115,7 @@ const BeforeLogin = () => {
           gap: 20px;
         }
         .carousel {
+          margin-bottom: 260px;
         }
       `}</style>
     </>
